@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Design Patterns 14 - 观察者模式">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/02/21/Design Patterns/Design Patterns 14 - 观察者模式/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Design Patterns 14 - 观察者模式 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Design Patterns 14 - 观察者模式
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Design-Patterns/">Design Patterns</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#观察者模式"><span class="toc-text">观察者模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#观察者模式特点"><span class="toc-text">观察者模式特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事件委托"><span class="toc-text">事件委托</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h1><a id="more"></a>
+
+<p>观察者模式又称发布-订阅模式, 定义了一种一对多的依赖关系, 让多个观察者对象同时监听某一个主题对象. 这个主题对象在状态发生变化时, 会通知所有观察者对象, 让他们能够自动更新自己.</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> IList&lt;Observer&gt; observers = <span class="keyword">new</span> List&lt;Observer&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Attach</span>(<span class="params">Observer observer</span>)</span> &#123;</span><br><span class="line">        observers.Add(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Detach</span>(<span class="params">Observer observer</span>)</span> &#123;</span><br><span class="line">        observers.Remove(observer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">foreach</span>(Observer observer <span class="keyword">in</span> observers) &#123;</span><br><span class="line">            observer.Update();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Observer</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">ConcreteSubject</span> : <span class="title">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">string</span> subjectState;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> SubjectState &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> subjectState;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            subjectState = <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">ConcreteObserver</span> : <span class="title">Observer</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">string</span> name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">string</span> observerState;</span><br><span class="line">    <span class="keyword">private</span> ConcreteSubject subject;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ConcreteObserver</span>(<span class="params">ConcreteSubject subject, <span class="keyword">string</span> name</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.subject = subject;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        observerState = subject.SubjectState();</span><br><span class="line">        <span class="comment">// todo</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> ConcreteSubject Subject &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> subject;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">            subject = <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] agrs</span>)</span> &#123;</span><br><span class="line">    ConcreteSubject subject = <span class="keyword">new</span> ConcreteSubject();</span><br><span class="line"></span><br><span class="line">    subject.Attach(<span class="keyword">new</span> ConcreteObserver(subject, <span class="string">"X"</span>));</span><br><span class="line">    subject.Attach(<span class="keyword">new</span> ConcreteObserver(subject, <span class="string">"Y"</span>));</span><br><span class="line"></span><br><span class="line">    subject.SubjectState = <span class="string">"ABC"</span>;</span><br><span class="line">    subject.Notify();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="观察者模式特点"><a href="#观察者模式特点" class="headerlink" title="观察者模式特点"></a>观察者模式特点</h2><p>将一个系统分割成一系列相互协作的类有一个很不好的副作用, 那就是需要维护相关对象间的一致性, 我们不希望为了维持一致性而使各类紧密耦合, 这样会给维护, 扩展和重用都带来不便. 而观察者模式的关键对象是主题Subject和观察者Observer, 一个Subject可以有任意数目的依赖他的Observer, 一旦Subject的状态发生改变, 所有的Observer都可以得到通知.</p>
+<p>当一个对象的改变需要同时改变其他对象, 而且他不知道具体有多少对象有待改变时, 应该考虑使用观察者模式.</p>
+<p>观察者模式所做的工作其实就是在解耦合, 让耦合的双方都依赖于抽象, 而不是依赖于具体. 从而使得各自的变化都不会影响另一边的变化.</p>
+<h2 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h2><p>委托就是一种引用方法的类型. 一旦为委托分配了方法, 委托将与该方法具有完全相同的行为. 委托方法的使用可以像其他任何方法一样, 具有参数和返回值, 委托可以看作是对函数的抽象, 是函数的类, 委托的实例将代表一种具体的函数.</p>
+<p>一个委托可以搭载多个方法, 所有方法被一次唤起, 他可以使得委托对象所打在的方法并不属于同一个类.</p>
+<p>委托的前提就是委托对象所搭载的所有方法必须具有相同的原型和形式, 也就是拥有相同的参数列表和返回值类型.</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">deleget <span class="keyword">void</span> <span class="title">EventHandler</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">class Subject() &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">event</span> EventHandler Update;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        Update();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] agrs</span>)</span> &#123;</span><br><span class="line">    Subject subject = <span class="keyword">new</span> Subject();</span><br><span class="line"></span><br><span class="line">    subject.Update += <span class="keyword">new</span> EventHandler(objectA.MethodA);</span><br><span class="line">    subject.Update += <span class="keyword">new</span> EventHandler(objectB.MethodB);</span><br><span class="line"></span><br><span class="line">    subject.Notify();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/02/21/Design Patterns/Design Patterns 15 - 抽象工厂模式/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Design Patterns 15 - 抽象工厂模式</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/02/20/Design Patterns/Design Patterns 13 - 建造者模式/">
+        <span class="next-text nav-default">Design Patterns 13 - 建造者模式</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Java 14 - 垃圾回收算法">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/07/28/Java/Java 14 - 垃圾回收算法/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Java 14 - 垃圾回收算法 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Java 14 - 垃圾回收算法
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-28
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Java/">Java</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#垃圾回收算法"><span class="toc-text">垃圾回收算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#垃圾收集算法"><span class="toc-text">垃圾收集算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Minor-GC-和-Full-GC"><span class="toc-text">Minor GC 和 Full GC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存分配策略"><span class="toc-text">内存分配策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#触发Full-GC条件"><span class="toc-text">触发Full GC条件</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h1><a id="more"></a>
+
+<h2 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h2><ol>
+<li><p>标记 - 清除</p>
+<p> 将存活的对象标记, 然后清理掉未标记的对象.</p>
+<p> 缺点:</p>
+<ol>
+<li><p>标记和清除的效率不高.</p>
+</li>
+<li><p>产生大量内存碎片, 不能给大的对象分配内存.</p>
+</li>
+</ol>
+</li>
+<li><p>标记 - 整理</p>
+<p> 将标记的对象放在连续的空间, 清除掉空间以外的内存.</p>
+</li>
+<li><p>复制</p>
+<p> 将内存分成两块, 每次只用其中的一半, 当这一半用完了, 就将存活的对象放到另一半, 然后把当前这一半回收.</p>
+<p> Java中的新生代就是用的这个方法, 但是是将内存分成了较大的Eden区和两个Survivor区, 每次使用Eden和一个Survivor. 回收的时候, 将存活的对象放在另一个Survivor区. Eden占80, Survivorge占10%. 如果回收时候有超过一个Survivor大小的对象, 需要老年代进行分配担保, 也就是借用老年代的空间暂存对象.</p>
+</li>
+<li><p>分代收集</p>
+<p> Java堆分成新生代和老年代. 新生代采用复制算法, 老年代采用标记 - 清除或者标记 - 整理的方法.</p>
+</li>
+</ol>
+<h2 id="Minor-GC-和-Full-GC"><a href="#Minor-GC-和-Full-GC" class="headerlink" title="Minor GC 和 Full GC"></a>Minor GC 和 Full GC</h2><ol>
+<li><p>Minor GC: 发生在新生代上, 因为新生代的对象存活时间短, 因此会频繁执行, 执行速度也比较快.</p>
+</li>
+<li><p>Full GC: 发生在老年代, 老年代对象存活时间长, 很少执行, 执行速度也比较慢.</p>
+</li>
+</ol>
+<h2 id="内存分配策略"><a href="#内存分配策略" class="headerlink" title="内存分配策略"></a>内存分配策略</h2><ol>
+<li><p>优先分配在Eden</p>
+<p> 大多数情况下, 对象在新生代Eden区分配, 如果空间不够, 发起一次Minor GC.</p>
+</li>
+<li><p>大对象直接进入老年代</p>
+<p> 大对象是指需要连续分配很多空间的, 比如数组.</p>
+<p> 经常出现大对象会提前触发GC来获取足够的连续空间存放.</p>
+<p> -XX:PretenureSizeThreshold, 大于此值的对象直接在老年代分配.</p>
+</li>
+<li><p>长期存活的对象进入老年代</p>
+<p> 为对象定义年龄计数器, 对象在Eden出生并且经过Minor GC后存活, 将移动到Survivor, 年龄加一, 增加到一定年龄进入老年代.</p>
+<p> -XX:MaxTenuringThreshold, 用来定义年龄阈值.</p>
+</li>
+<li><p>动态对象年龄判定</p>
+<p> 如果Survivor中的所有相同年龄对象的总和大于一半, 那么大于等于这个年龄的对象都进入老年代.</p>
+</li>
+<li><p>空间分配担保</p>
+<p> 在Minor GC之前, 会检查老年代中最大的连续空间是否大于新生代所有对象的总和大小, 如果可以, 那么进行Minor GC. 否则看HandlePromotionFailure是否允许担保失败, 如果允许那么检查最大连续空间是否大于历次进入老年代对象总和的平均大小, 如果满足则尝试进行Minor GC, 否则进行Full GC.</p>
+</li>
+</ol>
+<h2 id="触发Full-GC条件"><a href="#触发Full-GC条件" class="headerlink" title="触发Full GC条件"></a>触发Full GC条件</h2><p>只要Eden满, 就会出发Minor GC, 而Full GC出发有多种条件:</p>
+<ol>
+<li><p>调用System.gc()</p>
+<p> 这个方法只是建议JVM执行一次Full GC, JVM不一定真的执行.</p>
+</li>
+<li><p>老年代空间不足</p>
+</li>
+<li><p>空间担保失败</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/07/28/Java/Java 15 - 类加载过程/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Java 15 - 类加载过程</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/28/Java/Java 13 - 判断对象是否存活/">
+        <span class="next-text nav-default">Java 13 - 判断对象是否存活</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

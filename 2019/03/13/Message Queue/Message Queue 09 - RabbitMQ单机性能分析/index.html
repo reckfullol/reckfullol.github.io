@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Message Queue 09 - RabbitMQ单机性能分析">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/03/13/Message Queue/Message Queue 09 - RabbitMQ单机性能分析/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Message Queue 09 - RabbitMQ单机性能分析 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Message Queue 09 - RabbitMQ单机性能分析
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-03-13
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Message-Queue/">Message Queue</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RabbitMQ单机性能分析"><span class="toc-text">RabbitMQ单机性能分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Broker配置"><span class="toc-text">Broker配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析目标"><span class="toc-text">分析目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试模型"><span class="toc-text">测试模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能测试"><span class="toc-text">性能测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#横向比较"><span class="toc-text">横向比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#链路时延"><span class="toc-text">链路时延</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Broker-负载"><span class="toc-text">Broker 负载</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#纵向比较"><span class="toc-text">纵向比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#链路时延-1"><span class="toc-text">链路时延</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Broker-负载-1"><span class="toc-text">Broker 负载</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能分析"><span class="toc-text">性能分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化"><span class="toc-text">优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注"><span class="toc-text">注</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="RabbitMQ单机性能分析"><a href="#RabbitMQ单机性能分析" class="headerlink" title="RabbitMQ单机性能分析"></a>RabbitMQ单机性能分析</h1><a id="more"></a>
+
+<h2 id="Broker配置"><a href="#Broker配置" class="headerlink" title="Broker配置"></a>Broker配置</h2><ul>
+<li>CPU: Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz</li>
+<li>内存: 35GB</li>
+<li>Erlang: Erlang (BEAM) emulator version 10.1.1</li>
+<li>RabbitMQ: 3.7.8</li>
+<li>OS: Tencent tlinux release 1.2 (Final)</li>
+</ul>
+<h2 id="分析目标"><a href="#分析目标" class="headerlink" title="分析目标"></a>分析目标</h2><ol>
+<li><strong>时延</strong>: 针对于游戏类强互动型业务, <strong>响应时间</strong>是十分影响玩家观感的重要指标, 因此是我们分析的重点.</li>
+<li><strong>吞吐量</strong>: 针对于游戏业务的特点, 集中访问是经常出现的场景, 因此需要依赖MQ进行<strong>流量削峰</strong>, 承载大量请求, 保证较高的<strong>吞吐量</strong>.</li>
+<li><strong>机器负载</strong></li>
+</ol>
+<h2 id="测试模型"><a href="#测试模型" class="headerlink" title="测试模型"></a>测试模型</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1551923439/mq/performance_test_architecture.png" alt="performance_test_architecture"></p>
+<p>我们从 <strong>Send</strong> 端发送消息一条带有<strong>时间戳</strong>的消息至RabbitMQ, 然后消息转发到 <strong>Reply</strong> 端, <strong>Reply</strong> 将标志位修改, 表示完成转发操作, 再将消息发送回 <strong>RabbitMQ</strong>, 最终回到 <strong>Recv</strong> 端, 将时间戳于当前时间做差, 得到这一次链路所需时间. 为了保证时间的准确性, 我们可以把 <strong>Send</strong> 和 <strong>Recv</strong> 部署到同一个实体机.</p>
+<p><a href="https://github.com/Snakeflute/rabbitmq-performance-test" target="_blank" rel="noopener">测试代码</a></p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><h3 id="横向比较"><a href="#横向比较" class="headerlink" title="横向比较"></a>横向比较</h3><p>我们设置发包大小为 <strong>1K Bytes</strong>, 分别控制发包速率为 <strong>3w/s</strong>, <strong>4w/s</strong>, <strong>5w/s</strong>, <strong>6w/s</strong>下, 消息的<strong>时延分布</strong>和 <strong>broker 负载</strong>:</p>
+<h4 id="链路时延"><a href="#链路时延" class="headerlink" title="链路时延"></a>链路时延</h4><ul>
+<li><p>3w/s:</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552446299/mq/3w_1k_probability_distributions.png" alt="3w_1k"></p>
+<p>  此时 <strong>99.5%</strong> 的链路时延都在 <strong>20ms</strong> 以下, <strong>0.5%</strong> 超过 <strong>20ms</strong>, 最大时延在 <strong>40ms</strong> 左右.</p>
+</li>
+<li><p>4w/s:</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552445960/mq/4w_1k_probability_distributions.png" alt="4w_1k"></p>
+<p>  此时 <strong>99%</strong> 的链路时延都在 <strong>20ms</strong> 以下, <strong>1%</strong> 超过 <strong>20ms</strong>, 最大时延在 <strong>120ms</strong> 左右.</p>
+</li>
+<li><p>5w/s:</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552445960/mq/5w_1k_probability_distributions.png" alt="5w_1k"></p>
+<p>  此时<strong>98%</strong>链路时延都在<strong>20ms</strong>以下, <strong>2%</strong>超过<strong>20ms</strong>, 最大时延在<strong>200ms</strong>左右.</p>
+</li>
+<li><p>6w/s:</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552445961/mq/6w_1k_probability_distributions.png" alt="6w_1k"></p>
+<p>  此时 <strong>96%</strong> 链路时延都在 <strong>20ms</strong> 以下, <strong>4%</strong> 超过 <strong>20ms</strong>, 最大时延在 <strong>150ms</strong> 左右.</p>
+</li>
+</ul>
+<h4 id="Broker-负载"><a href="#Broker-负载" class="headerlink" title="Broker 负载"></a>Broker 负载</h4><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552465797/mq/landscape_load.png" alt="landscape_load"></p>
+<p>CPU负载和上行带宽负载和发包速率呈<strong>线性关系</strong>, 内存负载<strong>没有变化</strong>.</p>
+<h3 id="纵向比较"><a href="#纵向比较" class="headerlink" title="纵向比较"></a>纵向比较</h3><p>我们再控制 <strong>4w/s</strong> 发包速率下发包大小分别为 <strong>500 Bytes</strong>, <strong>1K Bytes</strong>, <strong>2K Bytes</strong> 的消息<strong>时延分布</strong>和 <strong>broker 负载</strong>:</p>
+<h4 id="链路时延-1"><a href="#链路时延-1" class="headerlink" title="链路时延"></a>链路时延</h4><ul>
+<li><p>500 Bytes:</p>
+</li>
+<li><p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552445961/mq/4w_500b_probability_distributions.png" alt="4w_500byte"></p>
+<p>  此时 <strong>99%</strong> 链路时延都在 <strong>20ms</strong> 以下, <strong>1%</strong> 超过 <strong>20ms</strong>, 最大时延在 <strong>40ms</strong> 左右.</p>
+</li>
+</ul>
+<ul>
+<li><p>1K Bytes:</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552445960/mq/4w_1k_probability_distributions.png" alt="4w_1k"></p>
+<p>  此时 <strong>99%</strong> 链路时延都在 <strong>20ms</strong> 以下, <strong>1%</strong> 超过 <strong>20ms</strong>, 最大时延在 <strong>120ms</strong> 左右.</p>
+</li>
+<li><p>2K Bytes:</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552445960/mq/4w_2k_probability_distributions.png" alt="4w_2k"></p>
+<p>  此时 <strong>98%</strong> 链路时延都在 <strong>20ms</strong> 以下, <strong>2%</strong> 超过 <strong>20ms</strong>, 最大时延在 <strong>200ms</strong> 左右.</p>
+</li>
+</ul>
+<h4 id="Broker-负载-1"><a href="#Broker-负载-1" class="headerlink" title="Broker 负载"></a>Broker 负载</h4><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552466529/mq/portrait_load.png" alt="portrait_load"></p>
+<p>CPU负载和上行带宽负载和发包速率呈<strong>线性关系</strong>, 内存负载<strong>没有变化</strong>.</p>
+<h2 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h2><ol>
+<li><p>时延: RabbitMQ的时延在绝大时候都能维持在链路时延 <strong>20ms</strong>, 单向时延 <strong>10ms</strong> 下, 但是我们注意到, 消息的时延会存在规律性的波峰, 对照这个时期的CPU负载和内存负载:</p>
+<p> <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552469319/mq/cpu_fluctuation.png" alt="cpu_fluctuation"></p>
+<p> <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552469504/mq/mem_fluctuation.png" alt="mem_fluctuation"></p>
+<p> 我们可以发现此时CPU的负载有明显的下降, 而内存并没有波动. 说明此时并没有发生 <strong>paging</strong> (消息持久化到磁盘), 因为我们的消息也并没有持久化设置. 因此<strong>推测</strong>, 这时可能是该节点的Erlang GC按照进程级别进行标记-清扫, 会将 <strong>amqqueue</strong> 进程暂停, 直至GC结束. 由于在RabbitMQ中, 一个队列只有一个 <strong>amqqueue</strong> 进程, 该进程又会处理大量的消息, 产生大量的垃圾, 这就导致了该进程GC较慢, 进而流量控制block上游, 导致了消息时延出现较大波动.</p>
+</li>
+<li><p>吞吐量: 发包速率在 <strong>4w/s(500 Bytes)</strong> 即RabbitMQ吞吐量 <strong>8w/s(500 Bytes)</strong>, CPU负载在 <strong>88%</strong>, 链路时延 <strong>20ms</strong> 以下的比率在 <strong>99%</strong> 左右, 最大时延在 <strong>40ms</strong> 左右. 我们可以发现, RabbitMQ的<strong>吞吐量</strong>和 <strong>CPU 负载</strong>成<strong>线性关系</strong>.</p>
+</li>
+</ol>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ol>
+<li><p>hipe_compile</p>
+<p> 在 <strong>/etc/rabbitmq/rabbitmq.config</strong> 我们可以将 <strong>hipe_compile</strong> 选项打开:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Explicitly enable/disable HiPE compilation.</span><br><span class="line">&#123;hipe_compile, true&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 其原理类似于 <strong>JIT</strong>, 可以对RabbitMQ进行预编译, 以增加启动时间为代价降低CPU的负载, 进而提高RabbitMQ的吞吐量, 我们还是以  <strong>4w/s(1K Byte)</strong> 的发包速率进行测试:</p>
+<p> <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1552471264/mq/cpu_compare.png" alt="hipe_compile"></p>
+<p> 我们可以看到, CPU的负载降低了 <strong>23%</strong>, 是十分可观的提升.</p>
+</li>
+<li><p>及时取出消息</p>
+<p> 在RabbitMQ中, 如果生产者持续高速发送, 而消费者速度较低, 此时会触发流量控制限制消费者的发送, 直到消费者完成消息的取出. 而这一过程会造成<strong>消息时延过高</strong>, 因此需要及时取出消息.</p>
+</li>
+<li><p>横向扩展</p>
+<p> 当单个Broker无法满足业务的qps时, 可以通过设置 <strong>RabbitMQ Cluster</strong> 的方式横向扩展吞吐量, 并且可以采用镜像队列的方式实现高可用. 值得注意的是, 镜像队列的方式会在各个Broker间同步消息, 占用Broker带宽和CPU.</p>
+</li>
+<li><p>控制发包大小</p>
+<p> 从客户端到Broker的的最大帧是 <strong>128K</strong>, 因此我们可以认为在(0K, 128K]的区间CPU负载和带宽上行负载随着发包大小<strong>线性变化</strong>. 当消息大小大于128K后会进行拆包和包, 这个过程会影响Broker的性能.</p>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们可以看到, 在吞吐量为 <strong>8w/s(发包速率4w/s, 500 Bytes)</strong> 时, CPU的负载为 <strong>71%</strong>, 单向时延整体在 <strong>10ms</strong> 以下, 作为服务于游戏业务的中间件时, 其低时延, 高吞吐的特性是可以满足一般的场景业务需求.</p>
+<h2 id="注"><a href="#注" class="headerlink" title="注"></a>注</h2><blockquote>
+<p>链路时延: 一条消息从 send -&gt; rabbitmq -&gt; reply -&gt; rabbitmq -&gt; recv 所需要的时间, 单向时延 = 链路时延 / 2.</p>
+</blockquote>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/04/04/Unity/Unity 01 - ECS概念/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Unity 01 - ECS概念</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/02/28/CUDA/CUDA 02 - 逻辑模型/">
+        <span class="next-text nav-default">CUDA 02 - 逻辑模型</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

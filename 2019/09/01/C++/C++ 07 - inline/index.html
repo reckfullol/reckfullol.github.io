@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="C++ 07 - inline">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/09/01/C++/C++ 07 - inline/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> C++ 07 - inline - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          C++ 07 - inline
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/C/">C++</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#inline"><span class="toc-text">inline</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#C-语法"><span class="toc-text">C++语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优点"><span class="toc-text">优点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#缺点"><span class="toc-text">缺点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="inline"><a href="#inline" class="headerlink" title="inline"></a>inline</h1><a id="more"></a>
+
+<p>inline 函数是一种编程语言结构, 用来建议编译器对一些特殊函数进行内联扩展, 即将指定对函数体插入并取代每一处调用该函数的地方(上下文), 从而节省每次调用函数带来的额外时间开支.</p>
+<h2 id="C-语法"><a href="#C-语法" class="headerlink" title="C++语法"></a>C++语法</h2><p>明确声明 inline函数的做法是在其定义式前加上关键字inline, 例如:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">const</span> T&amp; <span class="title">std::max</span><span class="params">(<span class="keyword">const</span> T&amp; am <span class="keyword">const</span> T&amp; b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a &lt; b ? b : a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>inline 函数通常一定被置于头文件内, 因为大多数 build environment 在编译过程中进行 inlining, 为了将一个函数调用替换为被调用函数的本体, 编译器必须知道那个函数长什么样子. 某些 build environment 可以在连接期完成 inlining, 少量 build environment 如基于 .NET CLI 的 managed environments 可以在运行期完成 inlining, 但是大部分的 C++程序是在编译期完成 inlining.</p>
+<p>inline 只是对编译器的一个申请, 并不是强制命令. 这项申请可以隐喻的提出, 隐喻方式是将函数定义于 class 定义式内:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 一个隐喻的 inline 申请:</span></span><br><span class="line"><span class="comment">     * 成员函数在类内被定义</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">GetAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大部分拒绝将太过复杂的函数 inlining, 例如带有循环或者递归的函数, 而对于所有的 virtual 函数也会失效, 因为 virtual 意味着直到运行期才能确定调用哪个函数.</p>
+<p>有时候编译器虽然有意愿 inlining 某个函数, 还是可能为该函数生成一个函数实体. 比如如果程序要取某个 inline 函数的地址, 编译器通常必须为此函数生成一个 outlined 函数本体. 毕竟编译器没有能力提出一个指针指向并不存在的函数. 于此并提的是, 编译器通常不对通过函数指针而进行的调用实施 inlining, 这意味这对 inline 函数的调用有可能被 inlined, 也可能不被 inlined , 取决于调用的方式:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 编译器有意愿 inline 对f的调用</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;...&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * pf 指向 f</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">void</span>(*pf) () = f;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 这个调用将被 inlined, 因为他是一个正常调用</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">f();</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 这个调用或许不被 inlined, 因为他通过函数指针达成</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">pf();</span><br></pre></td></tr></table></figure>
+
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ol>
+<li><p>inline 函数的代码被放入符号表中, 在使用时进行替换, 避免了函数调用时的开销.</p>
+</li>
+<li><p>编译器在调用内联函数的时候, 会对其合法性进行检查, 保证调用的正确, 消除了隐患和局限性.</p>
+</li>
+<li><p>inline 可以作为类的成员函数, 因此可以使用所在类的 protect 成员和 private 成员.</p>
+</li>
+</ol>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>inline 的使用会增加 object code 大小. 在内存有限的机器上, 过度热衷 inlining 会造成程序体积过大(对可用空间而言), 即使拥有虚拟内存, inline 造成的代码膨胀亦会导致额外的 paging, 降低 instruction cache hit rate, 以及伴随这些而来的效率问题.</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><ol>
+<li><p>构造函数和析构函数往往是 inlining 的糟糕候选人, 例如:</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> bm1, bm2;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span>:</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Derived() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> bm1, bm2, bm3;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p> 这个 Derived() 的构造函数是 inline 的绝佳候选人, 因为他不包含任何代码, 但其实 C++ 对于对象被创建和被销毁时发生什么事做了各种各样的保证. 当使用 new, 动态创建的对象被其构造函数自动初始化, 当使用 delete, 对应的析构函数会被调用. 当你创建一个对象, 每一个base class 及其每一个成员变量都会被自动构造, 当你销毁一个对象, 反向程序的析构行为亦会自动发生. 如果有个异常在对象构造期间被跑出, 该对象已构造好的那一部分会被自动销毁. 所以我们可以想象, 编译器为了表面上看起来空的 Derived 构造函数所产生的代码:</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> bm1, bm2;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span>:</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Derived() &#123;</span><br><span class="line">        Base::Base();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            dm1.<span class="built_in">std</span>::<span class="built_in">string</span>::<span class="built_in">string</span>();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;</span><br><span class="line">            Base::~Base();</span><br><span class="line">            <span class="keyword">throw</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            dm2.<span class="built_in">std</span>::<span class="built_in">string</span>::<span class="built_in">string</span>();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;</span><br><span class="line">            dm2.<span class="built_in">std</span>::<span class="built_in">string</span>::~<span class="built_in">string</span>();</span><br><span class="line">            Base::~Base();</span><br><span class="line">            <span class="keyword">throw</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            dm3.<span class="built_in">std</span>::<span class="built_in">string</span>::<span class="built_in">string</span>();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;</span><br><span class="line">            dm1.<span class="built_in">std</span>::<span class="built_in">string</span>::~<span class="built_in">string</span>();</span><br><span class="line">            dm2.<span class="built_in">std</span>::<span class="built_in">string</span>::~<span class="built_in">string</span>();</span><br><span class="line">            dm3.<span class="built_in">std</span>::<span class="built_in">string</span>::~<span class="built_in">string</span>();</span><br><span class="line">            Base::~Base();</span><br><span class="line">            <span class="keyword">throw</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> bm1, bm2, bm3;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p> 这段代码并不能代表编译器真正制造出来的代码, 只能描述观念性实现, 因为真正的编译器会以更精致复杂的做法来处理一场. 尽管如此, 这已能准确反应 Derived 的空白构造函数必须提供的行为. 因此如果他被 inlined, 隐形 object code 会急剧膨胀. 现在我们可以看到, 将构造函数和析构函数 inline 化并不是一个轻松的决定.</p>
+</li>
+<li><p>程序设计者必须知道, inline 函数无法跟随程序库的升级而升级</p>
+<p> 如果 f 是程序库内一个 inline 函数, 客户将 f 函数本体编进其程序中, 一旦程序库设计者决定改变 f, 所有用到 f 的客户端程序都必须重新编译. 而如果 f 是 non-inline 函数, 一旦它有任何修改, 客户端只需重新连接就好, 远比重新编译的负担少很多. 如果程序库采用动态连接, 升级版函数甚至可以不知不觉的被应用程序采纳.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/09/02/LeetCode/LeetCode 0388 - Longest Absolute File Path/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0388 - Longest Absolute File Path</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/08/15/LeetCode/LeetCode 0387 - First Unique Character in a String/">
+        <span class="next-text nav-default">LeetCode 0387 - First Unique Character in a String</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

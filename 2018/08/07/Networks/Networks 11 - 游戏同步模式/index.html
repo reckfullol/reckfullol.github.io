@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Networks 11 - 游戏同步模式">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/08/07/Networks/Networks 11 - 游戏同步模式/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Networks 11 - 游戏同步模式 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Networks 11 - 游戏同步模式
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Networks/">Networks</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#游戏同步模式"><span class="toc-text">游戏同步模式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#帧同步"><span class="toc-text">帧同步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态同步"><span class="toc-text">状态同步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区别"><span class="toc-text">区别</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="游戏同步模式"><a href="#游戏同步模式" class="headerlink" title="游戏同步模式"></a>游戏同步模式</h1><a id="more"></a>
+
+<p>常见的游戏同步方式分为帧同步和状态同步.</p>
+<h2 id="帧同步"><a href="#帧同步" class="headerlink" title="帧同步"></a>帧同步</h2><p>帧同步是在关键帧的时候同步操作到服务器, 服务器转发操作给客户端. 客户端只有接收到关键帧后才会进行操作. 我们可以把游戏想象是一个状态机, 所有玩家从上一关键帧到这一关键帧的所有操作看作是输入, 逐帧推动着状态的改变.</p>
+<h2 id="状态同步"><a href="#状态同步" class="headerlink" title="状态同步"></a>状态同步</h2><p>状态同步是客户端上传操作到服务器, 服务器收到游戏行为后进行验算, 然后以广播的形式发放游戏状态, 客户端再根据这个进行显示.</p>
+<h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><ol>
+<li><p>核心交互逻辑写在哪</p>
+<p> 状态同步和帧同步最大区别在于, 核心交互逻辑写在哪里. 帧同步的核心逻辑是写在客户端, 服务器做的仅仅是分发操作. 状态同步下客户端仅仅是用来进行表现的, 逻辑运算是在服务器上的.</p>
+</li>
+<li><p>流量</p>
+<p> 状态同步的流量消耗要大过帧同步. 因为一个角色自身属性就有可能有上百条, 每次服务器都需要对这些数据进行同步, 并且对于一个操作, 也要分阶段分发状态, 以完成一次操作. 而帧同步只需要对操作进行上传和分发, 甚至可以可以进行状态压缩, 控制发送数据大小.</p>
+</li>
+<li><p>回放观战</p>
+<p> 对于帧同步, 只需要保存整局玩家的所有操作, 在客户端上重新运行即可. 而状态同步则需要将全局的状态变化都进行保存.</p>
+</li>
+<li><p>安全性</p>
+<p> 帧同步在安全性上要弱于状态同步. 尤其是RTS中的战略迷雾和FPS中的透视, 是很难加以限制的. 因为客户端需要同步所有玩家的操作, 玩家不能看到其他玩家仅仅在表现层上, 逻辑层上还是能够知道其他玩家的当前状态. 而状态同步所有的逻辑运算都是在服务器上进行, 客户端只是表现接收到的当前状态, 因此一般不存在安全性问题.</p>
+</li>
+<li><p>断线重连</p>
+<p> 帧同步要实现断线重连比较麻烦, 因为要对所有帧进行缓存, 然后加速运算, 直到追赶到当前帧. 状态同步仅需要分发当前状态, 重新渲染, 或者插值运算即可</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/08/17/LeetCode/LeetCode 0229 - Majority Element II/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0229 - Majority Element II</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/08/05/SQL/SQL 02 - 并发一致性问题/">
+        <span class="next-text nav-default">SQL 02 - 并发一致性问题</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

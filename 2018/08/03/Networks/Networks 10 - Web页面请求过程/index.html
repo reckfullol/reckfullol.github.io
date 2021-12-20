@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Networks 10 - Web页面请求过程">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/08/03/Networks/Networks 10 - Web页面请求过程/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Networks 10 - Web页面请求过程 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Networks 10 - Web页面请求过程
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Networks/">Networks</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Web页面请求过程"><span class="toc-text">Web页面请求过程</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="Web页面请求过程"><a href="#Web页面请求过程" class="headerlink" title="Web页面请求过程"></a>Web页面请求过程</h1><a id="more"></a>
+
+<ol>
+<li><p>DHCP配置主机信息</p>
+<ol>
+<li><p>假设主机最开始没有IP地址以及其他信息, 那么就需要首先使用DHCP(动态主机配置协议))来获取.</p>
+</li>
+<li><p>主机生成一个DHCP请求报文, 并将这个报文放入具有目的端口67和源端口68的UDP报文段中.</p>
+</li>
+<li><p>该报文段被放入一个具有广播IP目的地址(255.255.255.255)和源IP地址(0.0.0.0)的IP数据报中.</p>
+</li>
+<li><p>该数据报被放在MAC帧中, 改帧的目的地址为FF:FF:FF:FF:FF:FF, 将广播到与交换机连接的所有设备.</p>
+</li>
+<li><p>DHCP服务器收到广播帧之后, 不断向上分解得到IP数据报, UDP报文段, DHCP请求报文, 然后生成DHCP ACK报文, 报文包含:IP地址, DNS服务器的IP地址, 默认网关路由器的IP地址子网掩码. 该报文被放在UDP报文段, UDP报文段被放在IP数据报中, 最后放在MAC帧中.</p>
+</li>
+<li><p>该帧的目的地址是请求主机的MAC地址. 因为交换机可以更新路由表, 之前主机发送了广播帧之后就记录了源发送的MAC地址到其转发接口的路由表项, 因此现在交换机就可以知道往哪个接口发送改帧.</p>
+</li>
+<li><p>主机收到该帧, 向上分解得到DHCP报文. 完成配置IP地址, 子网掩码, DNS服务器IP地址, 并在其IP转发表中安装默认网关.</p>
+</li>
+</ol>
+</li>
+<li><p>ARP解析MAC地址</p>
+<ol>
+<li><p>主机通过浏览器生成一个TCP套接字, 套接字向HTTP服务器发送HTTP请求. 为了生成该套接字, 主机需要网站的对应IP地址.</p>
+</li>
+<li><p>主机生成一个DNS查询报文, 该报文具有53号端口, 因为DNS服务器的端口号是53.</p>
+</li>
+<li><p>该DNS查询报文被放入目的地址为DNS服务器IP地址的IP数据报中.</p>
+</li>
+<li><p>该IP数据报被放入一个以太网帧中, 该帧将发送到网关路由器.</p>
+</li>
+<li><p>DHCP过程只知道网关路由器IP地址, 为了获取网关路由器的MAC地址, 需要使用ARP协议.</p>
+</li>
+<li><p>主机生成一个包含目的地址为网关路由器的IP地址的ARP查询报文, 将该ARP查询报文放入一个具有广播目的地址(FF:FF:FF:FF:FF:FF)的以太网帧, 并向交换机发送该以太网帧, 交换机将该帧转发给所有的连接设备, 包括网关路由器.</p>
+</li>
+<li><p>网关路由器接收到该帧后, 不断向上分解得到ARP报文, 发现其中的IP地址与其接口的IP地址匹配, 因此就发送一个ARP回答报文, 包含了他的MAC地址, 返回给主机.</p>
+</li>
+</ol>
+</li>
+<li><p>DNS解析域名</p>
+<ol>
+<li><p>知道了网关路由器的MAC地址之后, 就可以继续DNS解析过程了.</p>
+</li>
+<li><p>网关路由器收到包含DNS查询报文的以太网帧后, 抽取出IP数据报, 并根据转发表决定该IP数据报应该转发给的路由器.</p>
+</li>
+<li><p>因为路由器具有内部网关协议(RIP, OSPF)和外部网关协议(BGP)这两种路由协议, 因此路由表已经配置了网关路由器到达DNS服务器的路由表项.</p>
+</li>
+<li><p>到达DNS服务器后, DNS服务器抽取出DNS查询报文, 并在DNS数据库中查找待解析的域名.</p>
+</li>
+<li><p>找到DNS记录后, 发送DNS回答报文, 将该回答报文放到UDP报文段, 然后放入IP数据报中, 通过路由器反向发回网关路由器, 并经过以太网交换到达主机.</p>
+</li>
+</ol>
+</li>
+<li><p>HTTP请求页面</p>
+<ol>
+<li><p>有了HTTP服务器的IP地址后, 主机就能生成TCP套接字, 该套接字将用于向WEB服务器HTTP GET报文.</p>
+</li>
+<li><p>在生成TCP套接字之前, 必须先与HTTP服务器三次握手来建立连接. 生成一个具有目的端口80的TCP SYN报文段, 并向HTTP服务器发送该报文段.</p>
+</li>
+<li><p>HTTP服务器接收到该报文段后, 生成TCP SYN ACK报文段, 发回给主机.</p>
+</li>
+<li><p>连接建立之后, 浏览器生成HTTP GET报文, 并交付给HTTP服务器.</p>
+</li>
+<li><p>HTTP服务器从TCP套接字读取HTTP GET报文, 生成了一个HTTP响应报文, 将Web页面内容放回报文主体, 发回给主机.</p>
+</li>
+<li><p>浏览器收到HTTP响应报文后, 抽取Web页面, 之后进行渲染, 显示Web页面.</p>
+</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/08/05/SQL/SQL 01 - Redis与Memcached/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">SQL 01 - Redis与Memcached</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/08/03/Networks/Networks 09 - SSL握手/">
+        <span class="next-text nav-default">Networks 09 - SSL握手</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

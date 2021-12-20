@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Go 02 - make & new">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/09/21/Go/Go 02 - make & new/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Go 02 - make & new - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Go 02 - make & new
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Go/">Go</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#make-amp-new"><span class="toc-text">make &amp; new</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#make"><span class="toc-text">make</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#new"><span class="toc-text">new</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="make-amp-new"><a href="#make-amp-new" class="headerlink" title="make &amp; new"></a>make &amp; new</h1><a id="more"></a>
+
+<h2 id="make"><a href="#make" class="headerlink" title="make"></a>make</h2><blockquote>
+<p>func make(t Type, size …IntegerType) Type</p>
+</blockquote>
+<blockquote>
+<p>The make built-in function allocates and initializes an object of type slice, map, or chan (only). Like new, the first argument is a type, not a value. Unlike new, make’s return type is the same as the type of its argument, not a pointer to it. The specification of the result depends on the type:</p>
+</blockquote>
+<blockquote>
+<p>Slice: The size specifies the length. The capacity of the slice is<br>equal to its length. A second integer argument may be provided to<br>specify a different capacity; it must be no smaller than the<br>length. For example, make([]int, 0, 10) allocates an underlying array<br>of size 10 and returns a slice of length 0 and capacity 10 that is<br>backed by this underlying array.</p>
+</blockquote>
+<blockquote>
+<p>Map: An empty map is allocated with enough space to hold the<br>specified number of elements. The size may be omitted, in which case<br>a small starting size is allocated.</p>
+</blockquote>
+<blockquote>
+<p>Channel: The channel’s buffer is initialized with the specified<br>buffer capacity. If zero, or the size is omitted, the channel is<br>unbuffered.</p>
+</blockquote>
+<p>make 在 Go 中只能应用于初始化语言的基本类型 slice / map / channel:</p>
+<p>三者返回了不同类型的数据结构:</p>
+<ol>
+<li><p>slice</p>
+<p> slice := make([]int, 0, 100)<br> slice是一个包括了data, cap, len的结构体</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeslice</span><span class="params">(et *_type, <span class="built_in">len</span>, <span class="built_in">cap</span> <span class="keyword">int</span>)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">   		mem, overflow := math.MulUintptr(et.size, <span class="keyword">uintptr</span>(<span class="built_in">cap</span>))</span><br><span class="line">   		<span class="keyword">if</span> overflow || mem &gt; maxAlloc || <span class="built_in">len</span> &lt; <span class="number">0</span> || <span class="built_in">len</span> &gt; <span class="built_in">cap</span> &#123;</span><br><span class="line">       		mem, overflow := math.MulUintptr(et.size, <span class="keyword">uintptr</span>(<span class="built_in">len</span>))</span><br><span class="line">       		<span class="keyword">if</span> overflow || mem &gt; maxAlloc || <span class="built_in">len</span> &lt; <span class="number">0</span> &#123;</span><br><span class="line">           			panicmakeslicelen()</span><br><span class="line">       		&#125;</span><br><span class="line">       		panicmakeslicecap()</span><br><span class="line">   		&#125;</span><br><span class="line"></span><br><span class="line">   		<span class="keyword">return</span> mallocgc(mem, et, <span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>map</p>
+<p> hash := make(map[int]bool, 10)<br> hash是一个指向hmap结构体的指针</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makemap</span><span class="params">(t *maptype, hint <span class="keyword">int</span>, h *hmap)</span> *<span class="title">hmap</span></span> &#123;</span><br><span class="line">   		mem, overflow := math.MulUintptr(<span class="keyword">uintptr</span>(hint), t.bucket.size)</span><br><span class="line">   		<span class="keyword">if</span> overflow || mem &gt; maxAlloc &#123;</span><br><span class="line">       		hint = <span class="number">0</span></span><br><span class="line">   		&#125;</span><br><span class="line"></span><br><span class="line">    	<span class="keyword">if</span> h == <span class="literal">nil</span> &#123;</span><br><span class="line">       		h = <span class="built_in">new</span>(hmap)</span><br><span class="line">   		&#125;</span><br><span class="line">   		h.hash0 = fastrand()</span><br><span class="line"></span><br><span class="line">   		B := <span class="keyword">uint8</span>(<span class="number">0</span>)</span><br><span class="line">   		<span class="keyword">for</span> overLoadFactor(hint, B) &#123;</span><br><span class="line">       		B++</span><br><span class="line">   		&#125;</span><br><span class="line">   		h.B = B</span><br><span class="line"></span><br><span class="line">   		<span class="keyword">if</span> h.B != <span class="number">0</span> &#123;</span><br><span class="line">       		<span class="keyword">var</span> nextOverflow *bmap</span><br><span class="line">       		h.buckets, nextOverflow = makeBucketArray(t, h.B, <span class="literal">nil</span>)</span><br><span class="line">       		<span class="keyword">if</span> nextOverflow != <span class="literal">nil</span> &#123;</span><br><span class="line">           			h.extra = <span class="built_in">new</span>(mapextra)</span><br><span class="line">           			h.extra.nextOverflow = nextOverflow</span><br><span class="line">       		&#125;</span><br><span class="line">   		&#125;</span><br><span class="line"></span><br><span class="line">   		<span class="keyword">return</span> h</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>channel</p>
+<p> ch := make(chan int, 5)</p>
+<p> ch是一个指向hchan结构体的指针</p>
+ <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makechan</span><span class="params">(t *chantype, size <span class="keyword">int</span>)</span> *<span class="title">hchan</span></span> &#123;</span><br><span class="line">    elem := t.elem</span><br><span class="line">   	mem, _ := math.MulUintpt(elem.size, <span class="keyword">uintptr</span>(size))</span><br><span class="line"></span><br><span class="line">   	<span class="keyword">var</span> c *hchan</span><br><span class="line"> 	<span class="keyword">switch</span> &#123;</span><br><span class="line">   	<span class="keyword">case</span> mem == <span class="number">0</span>:</span><br><span class="line">       	c = (*hchan)(mallocgc(hchanSize, <span class="literal">nil</span>, <span class="literal">true</span>))</span><br><span class="line">       	c.buf = c.raceaddr()</span><br><span class="line">    <span class="keyword">case</span> elem.kind&amp;kindNoPointers != <span class="number">0</span>:</span><br><span class="line">        c = (*hchan)(mallocgc(hchanSize+mem, <span class="literal">nil</span>, <span class="literal">true</span>))</span><br><span class="line">       	c.buf = add(unsafe.Pointer(c), hchanSize)</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">       	c = <span class="built_in">new</span>(hchan)</span><br><span class="line">       	c.buf = mallocgc(mem, elem, <span class="literal">true</span>)</span><br><span class="line">   	&#125;</span><br><span class="line"></span><br><span class="line">   	c.elemsize = <span class="keyword">uint16</span>(elem.size)</span><br><span class="line">   	c.elemtype = elem</span><br><span class="line">   	c.dataqsiz = <span class="keyword">uint</span>(size)</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>编译期间的类型检查阶段, 就将代表make关键字的OMAKE节点根据参数类型的不同转换成了OMAKESLICE, OMAKEMAP和OMAKECHAN三种不同类型的节点, 这些节点最终也会调用不同的运行时函数来初始化数据.</p>
+<h2 id="new"><a href="#new" class="headerlink" title="new"></a>new</h2><p>new会在编译期间经过callnew函数的处理, 如果请求创建的类型大小是0, 就会返回一个表示空指针的zerobase变量, 在遇到其他情况时会将关键字newobject</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">callnew</span><span class="params">(t *types.Type)</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> t.NotInHeap() &#123;</span><br><span class="line">        yyerror(<span class="string">"%v is go:notinheap; heap allocation disallowed"</span>, t)</span><br><span class="line">    &#125;</span><br><span class="line">    dowidth(t)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> t.Size() == <span class="number">0</span> &#123;</span><br><span class="line">        z := newname(Runtimepkg.Lookup(<span class="string">"zerobase"</span>))</span><br><span class="line">        z.SetClass(PEXTERN)</span><br><span class="line">        z.Type = t</span><br><span class="line">        <span class="keyword">return</span> typecheck(nod(OADDR, z, <span class="literal">nil</span>), ctxExpr)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fn := syslook(<span class="string">"newobject"</span>)</span><br><span class="line">    fn = substArgTypes(fn, t)</span><br><span class="line">    v := mkcall1(fn, types.NewPtr(t), <span class="literal">nil</span>, typename(t))</span><br><span class="line">    v.SetNonNil(<span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是, 哪怕当前变量是使用var进行初始化, 这也阶段也可能会被转化成newobject的函数调用并在堆上申请内存. 当然不是绝对的, 如果当前声明的变量或者参数不需要在当前作用域外生存(逃逸分析), 那么就会初始化在函数栈中, 并且伴随着函数调用的结束销毁.</p>
+<p>newobject函数的工作就是获取传入类型的大小并调用mallocgc在堆上申请一片大小合适的内存空间并且返回指向这片内存空间的指针:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newobject</span><span class="params">(typ* _type)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> mallocgc(typ.size, typ, <span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/09/29/LeetCode/LeetCode 0396 - Rotate Function/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0396 - Rotate Function</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/09/19/LeetCode/LeetCode 0395 - Longest Substring with At Least K Repeating Characters/">
+        <span class="next-text nav-default">LeetCode 0395 - Longest Substring with At Least K Repeating Characters</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

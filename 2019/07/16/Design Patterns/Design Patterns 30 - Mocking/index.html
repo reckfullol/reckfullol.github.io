@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Design Patterns 30 - Mocking">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/07/16/Design Patterns/Design Patterns 30 - Mocking/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Design Patterns 30 - Mocking - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Design Patterns 30 - Mocking
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-16
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Design-Patterns/">Design Patterns</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mocking"><span class="toc-text">Mocking</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Is-mocking-evil"><span class="toc-text">Is mocking evil?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#But-mocks-and-tests-are-still-making-my-life-hard"><span class="toc-text">But mocks and tests are still making my life hard!</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mocking-1"><span class="toc-text">Mocking</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="Mocking"><a href="#Mocking" class="headerlink" title="Mocking"></a>Mocking</h1><a id="more"></a>
+
+<h2 id="Is-mocking-evil"><a href="#Is-mocking-evil" class="headerlink" title="Is mocking evil?"></a>Is mocking evil?</h2><p>You may have heard mocking is evil. Just like anything in software development it can be used evil, just like DRY(Don’t Repeat Yourself).</p>
+<p>People normally get in to a bad state when they don’t listen to their tests and are not respecting the refactoring stage.</p>
+<p>If your mocking code is becoming complicated or you are having to mock out lots of things to test something, you should listen to that bad feeling and think about your code. Usually it is a sign of:</p>
+<ul>
+<li>The thing you are testing is having to do too many things(because it has too many dependencies to mock)<ul>
+<li>Break the module apart so it does less</li>
+</ul>
+</li>
+<li>Its dependencies are too fine-grained<ul>
+<li>Think about how you can consolidate some of these dependencies into one meaningful module</li>
+</ul>
+</li>
+<li>Your test is too concerned with implementation details<ul>
+<li>Favour testing expected behaviour rather than the implement</li>
+</ul>
+</li>
+</ul>
+<p>Normally a lot of mocking points to bad abstraction in your code.</p>
+<p>What people see here is a weakness in TDD but it is actually a strength, more often than not poor test code is a result of bad design or put more nicely, well-designed code is easy to test.</p>
+<h2 id="But-mocks-and-tests-are-still-making-my-life-hard"><a href="#But-mocks-and-tests-are-still-making-my-life-hard" class="headerlink" title="But mocks and tests are still making my life hard!"></a>But mocks and tests are still making my life hard!</h2><p>Ever run into this situation?</p>
+<ul>
+<li>You want to do some refactoring</li>
+<li>To do this you end up changing lots of tests</li>
+<li>You question TDD and make a post on Medium titled “Mocking considered harmful”</li>
+</ul>
+<p>This is usually a sign of you testing too much implementation detail. Try to make it so your tests are testing useful behaviour unless the implementation is really important to how the system runs.</p>
+<p>Is is sometimes hard to know what level to test exactly but here are some thought processes and rules I try to follow:</p>
+<ul>
+<li>The definition of refactoring is that the code changes but the behaviour stays the same. If you have decided to do some refactoring in theory you should be able to do make the commit without any test changes. So when writing a test ask yourself<ul>
+<li>Am I testing the behaviour I want or the implementation details?</li>
+<li>If I were to refactor this code, would I have to make lots of changes to the tests?</li>
+</ul>
+</li>
+<li>Although Go lets you test privtae functions, I would avoid it as private functions are to do with implementation.</li>
+<li>I feel like if a test is working with more than 3 mocks then it is a red flag - time for a rethink on the design</li>
+<li>Use spies whit caution. Spies let you seet the insides of the algorithm you are writing which can be very useful but that means a tighter coupling between your test code and the implementation. Be sure you actually care about these details if you’re going to spy on them.</li>
+</ul>
+<p>As always, rules in software development aren’t really rules and there can be exceptions. <a href="https://8thlight.com/blog/uncle-bob/2014/05/10/WhenToMock.html" target="_blank" rel="noopener">Uncle Bob’s article of “When to mock”</a> has some excellent pointers.</p>
+<h2 id="Mocking-1"><a href="#Mocking-1" class="headerlink" title="Mocking"></a>Mocking</h2><ul>
+<li>Without mocking important areas of your code will be untested. In our case we would not be able to test that our code paused between each print but there are countless other examples. Calling a service that can fail? Wanting to test your system in a particular state? It is very hard to test these scenarios without mocking.</li>
+<li>Without mocks you may have to set up databases and other third parties things just to test simple business rules. You’re likely to have slow tests, resulting in slow feedback loops.</li>
+<li>By having to spin up a database or a webserver to test something you’re likely to have fragile due to the unreliabilty of such services.</li>
+</ul>
+<p>Once a developer learns about mocking it becomes very easy to over-test every single facet of a system in terms of the way it works rather than what it does. Always be mindful about the value of your tests and what impact they would have in future refactoring.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/07/22/LeetCode/LeetCode 0381 - Insert Delete GetRandom O(1) - Duplicates allowed/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0381 - Insert Delete GetRandom O(1) - Duplicates allowed</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/07/16/Design Patterns/Design Patterns 29 - TDD/">
+        <span class="next-text nav-default">Design Patterns 29 - TDD</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

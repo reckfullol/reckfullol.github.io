@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Erlang 02 - 分布式基础">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/05/30/Erlang/Erlang 02 - 分布式基础/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Erlang 02 - 分布式基础 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Erlang 02 - 分布式基础
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-05-30
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Erlang/">Erlang</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#分布式基础"><span class="toc-text">分布式基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#复制式进程间通信"><span class="toc-text">复制式进程间通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#位置透明性"><span class="toc-text">位置透明性</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="分布式基础"><a href="#分布式基础" class="headerlink" title="分布式基础"></a>分布式基础</h1><a id="more"></a>
+
+<p>Erlang的分布式基础主要给予两个基本特性:</p>
+<ol>
+<li>复制式进程间通信</li>
+<li>位置透明性</li>
+</ol>
+<h2 id="复制式进程间通信"><a href="#复制式进程间通信" class="headerlink" title="复制式进程间通信"></a>复制式进程间通信</h2><p>在解决两段并发执行的代码段之间的通信问题时, 最常用的模式就是让这两段代码共享某块内存, 前提是他们都在同一台机器上运行. 这种模式存在的问题之一就是, 当你希望每段代码都运行在独立的机器上时 就必须换用一种完全不同的通信方式, 代码中的很大一部分都需要被迫重写.</p>
+<p>对于Erlang来说, 要想在通信透明化的同时构建出容错的系统, 要想让一台机器不至于因为相邻的机器崩溃或者机器间的网络故障而宕机, 就必须抛弃共享.</p>
+<p>Erlang的进程间通信采用的是严格的异步消息传输(发送消息后无需等待网络上的确认), 接收方得到数据时实际上获取了数据的一份独立的副本. 此后接收方将无法感知发送方对数据所做的任何操作, 反之亦然. 后续的任何通信都必须借助额外的消息才能进行. 无论是运行在同一台机器上的进程还是运行在不同机器上并通过网络互联的进程, 这种模式都非常奏效.</p>
+<p>在Erlang中没有共享, 只有消息传递, 因此分布式还是单机本质上没有什么区别. 大部分代码完全不用关心进程最终在何处运行.</p>
+<p>然而在进行网络通信时仍然有很多需要注意的问题. 在使用本地通信时, 只要接收方进程还“活着“, 消息就一定能送达, 而且几乎没有传输延迟. 然而在网络中, 就不得不考虑路由过程中的消息延迟一集网络本身的故障了. 发送方通常无法辨别接收方到底是崩溃了还是因自身的bug而未能给出应答. 出于健壮性考虑, 即使采用本地通信, 发送方也应该对这些故障有所准备. 但在分布式系统中总会存在多种导致不确定性行为的因素.</p>
+<h2 id="位置透明性"><a href="#位置透明性" class="headerlink" title="位置透明性"></a>位置透明性</h2><p>发送运算符具有位置透明的属性, 接收方在哪台机器上并不重要, 只因消息走向的信息都隐含在进程标识符之中. Erlang会确保进程标识符在多机网络上的唯一性.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/05/31/LeetCode/LeetCode 0331 - Verify Preorder Serialization of a Binary Tree/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0331 - Verify Preorder Serialization of a Binary Tree</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/05/30/LeetCode/LeetCode 0330 - Patching Array/">
+        <span class="next-text nav-default">LeetCode 0330 - Patching Array</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

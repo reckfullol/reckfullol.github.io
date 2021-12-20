@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="ACMSGURU 507 - Treediff">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2020/11/18/ACMSGURU/ACMSGURU 507 - Treediff/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> ACMSGURU 507 - Treediff - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          ACMSGURU 507 - Treediff
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-11-18
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/ACMSGURU/">ACMSGURU</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Treediff"><span class="toc-text">Treediff</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Problem-Description"><span class="toc-text">Problem Description</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Input"><span class="toc-text">Input</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Output"><span class="toc-text">Output</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-s"><span class="toc-text">Example(s)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Solution"><span class="toc-text">Solution</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="Treediff"><a href="#Treediff" class="headerlink" title="Treediff"></a>Treediff</h1><a id="more"></a>
+
+<h2 id="Problem-Description"><a href="#Problem-Description" class="headerlink" title="Problem Description"></a>Problem Description</h2><p>Andrew has just made a breakthrough in complexity theory: he thinks that he can prove P=NP if he can get a data structure which allows to perform the following operation quickly. Naturally, you should help him complete his brilliant research. Consider a rooted tree with integers written in the leaves. For each internal (non-leaf) node v of the tree you must compute the minimum absolute difference between all pairs of numbers written in the leaves of the subtree rooted at v.</p>
+<h3 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h3><p>The first line of the input file contains two integers n and m — overall number of nodes in the tree and number of leaves in the tree respectively. <img src="https://espresso.codeforces.com/e969819d22422c7ba2a9a9664d60c3a425d6cdc5.png" alt>. All nodes are numbered from 1 to n. Node number 1 is always the root of the tree. Each of the other nodes has a unique parent in the tree. Each of the next n - 1 lines of the input file contains one integer — the number of the parent node for nodes 2, 3,…, n respectively. Each of the last m lines of the input file contains one integer ranging from <img src="https://espresso.codeforces.com/8956ddde38feeac9a82239162072525d790b1870.png" alt> to <img src="https://espresso.codeforces.com/4d18431e5cbe3d02088d40704fae7e3d35398fb3.png" alt> — the value of the corresponding leaf. Leaves of the tree have numbers from n - m + 1 to n.</p>
+<h3 id="Output"><a href="#Output" class="headerlink" title="Output"></a>Output</h3><p>Output one line with n - m integers: for each internal node of the tree output the minimum absolute difference between pairs of values written in the leaves of its subtree. If there is only one leaf in the subtree of some internal node, output number 231 - 1 for that node. Output the answers for the nodes in order from node number 1 to n - m.</p>
+<h3 id="Example-s"><a href="#Example-s" class="headerlink" title="Example(s)"></a>Example(s)</h3><table>
+<thead>
+<tr>
+<th>sample input</th>
+<th>sample output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5 4<br>1<br>1<br>1<br>1<br>1<br>4<br>7<br>9<br></td>
+<td>2</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>sample input</th>
+<th>sample output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5 4<br>1<br>1<br>1<br>1<br>1<br>4<br>7<br>10</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>sample input</th>
+<th>sample output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7 4<br>1<br>2<br>1<br>2<br>3<br>3<br>2 <br>10<br>7<br>15</td>
+<td>3 3 8</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>sample input</th>
+<th>sample output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2 1<br>1<br>100</td>
+<td>2147483647</td>
+</tr>
+</tbody></table>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::ios::sync_with_stdio(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> int int64_t</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> n, m;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; n &gt;&gt; m;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">sons_index</span><span class="params">(n + <span class="number">1</span>, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&#123;&#125;)</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt;&gt; <span class="title">sons_value</span><span class="params">(n + <span class="number">1</span>, <span class="built_in">std</span>::<span class="built_in">set</span>&lt;<span class="keyword">int</span>, <span class="built_in">std</span>::less&lt;<span class="keyword">int</span>&gt;&gt;&#123;&#125;)</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">values</span><span class="params">(n + <span class="number">1</span>, INT_MAX)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> current_father;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; current_father;</span><br><span class="line">        sons_index[current_father].push_back(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = n - m + <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> value;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; value;</span><br><span class="line">        sons_value[i].insert(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> dfs = <span class="built_in">std</span>::function&lt;<span class="keyword">void</span>(<span class="keyword">int</span>)&gt;&#123;&#125;;</span><br><span class="line">    dfs = [&amp;](<span class="keyword">int</span> index) -&gt; <span class="keyword">void</span> &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">const</span> <span class="keyword">auto</span>&amp; son_index : sons_index[index]) &#123;</span><br><span class="line">            dfs(son_index);</span><br><span class="line"></span><br><span class="line">            values[index] = <span class="built_in">std</span>::min(values[index], values[son_index]);</span><br><span class="line">            <span class="keyword">if</span>(sons_value[son_index].size() &gt; sons_value[index].size()) &#123;</span><br><span class="line">                <span class="built_in">std</span>::swap(sons_value[son_index], sons_value[index]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">auto</span> it = sons_value[son_index].begin(); it != sons_value[son_index].end(); it++) &#123;</span><br><span class="line">                <span class="keyword">auto</span> pre = sons_value[index].lower_bound(*it);</span><br><span class="line">                <span class="keyword">auto</span> suc = pre;</span><br><span class="line">                <span class="keyword">if</span>(pre != sons_value[index].begin()) &#123;</span><br><span class="line">                    pre--;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(pre != sons_value[index].end()) &#123;</span><br><span class="line">                    values[index] = <span class="built_in">std</span>::min(values[index], <span class="built_in">std</span>::<span class="built_in">abs</span>(*it - *pre));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(suc != sons_value[index].end()) &#123;</span><br><span class="line">                    values[index] = <span class="built_in">std</span>::min(values[index], <span class="built_in">std</span>::<span class="built_in">abs</span>(*it - *suc));</span><br><span class="line">                &#125;</span><br><span class="line">                sons_value[index].insert(*it);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    dfs(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span>(!sons_index[i].empty()) &#123;</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; values[i] &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2020/12/17/ACMSGURU/ACMSGURU 355 - Numbers Painting/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">ACMSGURU 355 - Numbers Painting</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2020/09/23/ACMSGURU/ACMSGURU 130 - Circle/">
+        <span class="next-text nav-default">ACMSGURU 130 - Circle</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Java 05 - volatile">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/07/14/Java/Java 05 - volatile/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Java 05 - volatile - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Java 05 - volatile
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-14
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Java/">Java</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#volatile"><span class="toc-text">volatile</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#几个概念"><span class="toc-text">几个概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile作用"><span class="toc-text">volatile作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile实现"><span class="toc-text">volatile实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile应用场景"><span class="toc-text">volatile应用场景</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h1><a id="more"></a>
+
+<h2 id="几个概念"><a href="#几个概念" class="headerlink" title="几个概念"></a>几个概念</h2><ol>
+<li><p>原子性</p>
+<p> 原子性是指, 对于一个操作或者多个操作, 要么全部执行并不会被打断, 要么都不执行.</p>
+<p> 在Java中, 基本类型, 引用类型的赋值和引用是原子操作. 在早期的JVM实现中, double和long是可以被分割的, 但在实际开发中, 目前各种平台下的商用虚拟机几乎都会选择把64位数据的读写操作作为原子操作来对待. 因此在使用long和double变量时一般不需要专门声明volatile.</p>
+</li>
+<li><p>可见性</p>
+<p> 可见性是指, 当多个线程访问同一个变量时, 一个线程修改了这个变量的值, 其他线程能够立即看到修改后的值.</p>
+<p> Java提供了关键字volatile来保证可见性, 即被volatile修饰的变量在修改后会把值更新到主存上, 当其他线程需要读取的时候, 会从内存中读取新值.</p>
+<p> 普通的共享变量不能保证可见性, 因此写入主存的时间是不确定的.</p>
+<p> 同时synchronized和lock也可以保证共享变量的可见性.</p>
+</li>
+<li><p>有序性</p>
+<p> 有序性是指, 程序的执行顺序是按照代码的先后顺序执行的.</p>
+<p> 在JVM中允许编译器和处理器对指令进行重排序, 可以提高执行效率. 值得注意的是, 重排序不会影响单进程程序的执行结果, 但是可能会影响多进程程序的执行结果.</p>
+<p> 在JMM中有happen-before原则, 如果两个操作的执行顺序无法满足happen-before, 那么就不能其有序性, JVM就可以对其进行重排序.</p>
+</li>
+</ol>
+<h2 id="volatile作用"><a href="#volatile作用" class="headerlink" title="volatile作用"></a>volatile作用</h2><ol>
+<li><p>保证了不同线程对共享变量操作的可见性, 即一个线程修改了某个共享变量的值, 那么这个新值对其他线程是可见的.</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// thread 01</span></span><br><span class="line"><span class="keyword">boolean</span> stop = <span class="keyword">false</span>;</span><br><span class="line"><span class="keyword">while</span>(!stop) &#123;</span><br><span class="line">    doSomething()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 02</span></span><br><span class="line">stop = <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure>
+
+<p> 上面的代码, 当线程2修改了stop的值, 但是还没来得及写入主存, 那么线程1就会一直在循环中调用doSomething方法.</p>
+<p> 那么当用volatile修饰stop变量后:</p>
+<ol>
+<li><p>线程2修改stop后值会强制写入主存.</p>
+</li>
+<li><p>线程2修改后, 线程1工作内存缓存变量stop无效, 线程1会主动到主存中获取最新值.</p>
+</li>
+</ol>
+</li>
+<li><p>禁止进行指令重排序</p>
+<ol>
+<li><p>当程序执行到volatile变量的读或写操作时, 在前面的操作的更改肯定是已经进行, 并且结果对后面的操作可见; 在其后面的操作肯定还没有进行.</p>
+</li>
+<li><p>在进行指令优化时, 不能将对volatile变量访问的语句放在后面执行, 也不能把volatile后面的语句放到前面执行.</p>
+<p>举个例子:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// thread 01</span></span><br><span class="line">context = loadContext();</span><br><span class="line">inited = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 02</span></span><br><span class="line"><span class="keyword">while</span>(!inited) &#123;</span><br><span class="line">    sleep();</span><br><span class="line">&#125;</span><br><span class="line">doSomething();</span><br></pre></td></tr></table></figure>
+
+<p>由于线程1中的语句1和语句2没有数据依赖关系, 因此有可能会被重排, 那么在context没有读取完毕的情况下, 线程2就有可能做下一步的操作.</p>
+<p>由此可见, 指令重排序不会影响单个线程的执行, 但是会影响到线程并发性的正确性.</p>
+<p>那么我们用volatile修饰inited后就不会出现这个问题了. 因为这样在编译期间, 会在指令序列中插入内存屏障来禁止特定类型的处理器重排序.</p>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="volatile实现"><a href="#volatile实现" class="headerlink" title="volatile实现"></a>volatile实现</h2><blockquote>
+<p>观察加入volatile关键字和没有加入volatile关键字时所生成的汇编代码发现，加入volatile关键字时，会多出一个lock前缀指令.</p>
+<p> &lt;深入理解Java虚拟机&gt;</p>
+</blockquote>
+<p>LOCK指令前缀会设置处理器的LOCK#信号, 这个信号会使总线锁定, 阻止其他处理器接管总线的访问, 使得指令的执行变成原子操作, 完成处理器对共享内存的独享使用.</p>
+<p>LOCK指令前缀实际上相当于一个内存屏障, 会提供3个功能:</p>
+<ol>
+<li><p>确保重排序时不会把后面的指令放到内存屏障之前的位置, 也不会把前面的指令放到内存屏障之后的位置, 即保证到内存屏障这个指令时, 前面的操作已经全部完成.</p>
+</li>
+<li><p>强制将对缓存的修改立即写到主存.</p>
+</li>
+<li><p>如果是写操作, 那么其他CPU的缓存行无效.</p>
+</li>
+</ol>
+<h2 id="volatile应用场景"><a href="#volatile应用场景" class="headerlink" title="volatile应用场景"></a>volatile应用场景</h2><p>应用前提:</p>
+<ol>
+<li><p>对变量的写操作不依赖于当前值.</p>
+</li>
+<li><p>变量没有包含在具有其他变量的不变式中.</p>
+</li>
+</ol>
+<p>应用场景:</p>
+<ol>
+<li><p>状态标记量</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// thread 01</span></span><br><span class="line">context = loadContext();</span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">boolean</span> inited = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 02</span></span><br><span class="line"><span class="keyword">while</span>(!inited) &#123;</span><br><span class="line">    sleep();</span><br><span class="line">&#125;</span><br><span class="line">doSomething();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>double check</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span>(Singleton<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这样可以减少每次获取单例是都要获得类锁的开销, 但是需要对引用用volatile修饰, 因为在Java中不同步的情况下引用不是线程安全的, 所以如果不用volatile修饰, double check是无效的.</p>
+<p> 其实这里更推荐Initialization on Demand Holder的方法来实现单例模式:</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getSingleton</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 我们知道, 在Java中初始化一个类, 包括执行这个类的静态初始化和在这个类中的静态字段. 当发生下列任意情况后, 类会被初始化:</p>
+<ul>
+<li><p>类的一个实例被创建.</p>
+</li>
+<li><p>类中的一个静态方法被调用.</p>
+</li>
+<li><p>类中声明的一个静态字段被赋值.</p>
+</li>
+<li><p>类中一个静态字段被使用, 同时不是常量.</p>
+</li>
+<li><p>类是一个顶级类, 同时内部有一个断言语句被执行.</p>
+<p>在Java中每一个类都有一个唯一的初始化锁与之对应, JVM在类的初始化期间会获得这个锁, 从而实现线程安全的情况下完成对类的初始化工作.</p>
+<p>综上我们可以看到基于类初始化的方案更加优雅, 但是volatile的double check还有一个优势, 就是可以完成对实例字段的延迟初始化.</p>
+</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/07/20/Java/Java 06 - interrupt/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Java 06 - interrupt</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/12/Java/Java 04 - synchronized/">
+        <span class="next-text nav-default">Java 04 - synchronized</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

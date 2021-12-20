@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Unity 01 - ECS概念">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/04/04/Unity/Unity 01 - ECS概念/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Unity 01 - ECS概念 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Unity 01 - ECS概念
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Unity/">Unity</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ECS概念"><span class="toc-text">ECS概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#传统OOP缺陷"><span class="toc-text">传统OOP缺陷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ECS模型"><span class="toc-text">ECS模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rotation-Example"><span class="toc-text">Rotation Example</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Legacy"><span class="toc-text">Legacy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ECS"><span class="toc-text">ECS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ECS优势"><span class="toc-text">ECS优势</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="ECS概念"><a href="#ECS概念" class="headerlink" title="ECS概念"></a>ECS概念</h1><a id="more"></a>
+
+<h2 id="传统OOP缺陷"><a href="#传统OOP缺陷" class="headerlink" title="传统OOP缺陷"></a>传统OOP缺陷</h2><p>传统OOP下的MonoBehaviour/GameObject模式, 可以非常方便的为创作游戏编写代码, 但是往往在后期会使得代码难以阅读, 维护, 优化, 游戏开销大而性能低, 这是由一系列因素导致的:</p>
+<ol>
+<li>OOP模型</li>
+<li>Mono编译的非最优机器吗</li>
+<li>GC</li>
+<li>单线程</li>
+</ol>
+<h2 id="ECS模型"><a href="#ECS模型" class="headerlink" title="ECS模型"></a>ECS模型</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1554371224/unity/ecs_overview.png" alt="ecs_overview"></p>
+<p>ESC(Entity-Component-System)是unity中DOTS(Data-Oriented Tech Stack)的核心(还有Burst Compile和Job System), 分为三个主要部分:</p>
+<ul>
+<li>Entity: the entities, or things, that populate your game or program</li>
+<li>Component: the data associated with your entities, but organized by the data itself rather than by entity. (This difference in organization is one of the key differences between an object-oriented and a data-oriented design.)</li>
+<li>System: the logic that transforms the component data from its current state to its next state— for example, a system might update the positions of all moving entities by their velocity times the time interval since the previous frame.</li>
+</ul>
+<p>作为取代GameObject/Component的模式, 其模式遵循组合优于继承原则, 游戏内的每一个基本单元都是一个Entity, 每个Entity又是由一个或者多个Component构成, 每个Component仅仅包含代表其特性的数据(即Component中没有任何方法). System是来处理具有一个或多个Component组件的Entity集合的工具, 只拥有行为(即在System中没有任何数据).</p>
+<p>Entity和Component是一对多的关系, Entity拥有怎样的能力, 完全取决于有哪些Component, 通过动态添加或者删除Component, 可以在运行时改变Entity的行为.</p>
+<h2 id="Rotation-Example"><a href="#Rotation-Example" class="headerlink" title="Rotation Example"></a>Rotation Example</h2><h3 id="Legacy"><a href="#Legacy" class="headerlink" title="Legacy"></a>Legacy</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Rotator</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> RadiansPerSecond;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        transform.rotation *= Quatern.AngleAxix(Time.deltaTime * RadiansPerSecond, Vector3.up);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继承自MonoBehabiour的GameObject即包含了数据(数据域), 又包含了行为(Update).</p>
+<h3 id="ECS"><a href="#ECS" class="headerlink" title="ECS"></a>ECS</h3><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RotationSpeed.cs</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> Unity.Entities;</span><br><span class="line"></span><br><span class="line">[<span class="meta">Serializable</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> RotationSpeed : IComponentData &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> RadiansPerSecond;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RotationSpeedProxy.cs</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> Unity.Entities;</span><br><span class="line"><span class="keyword">using</span> Unity.Mathematics;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line">[<span class="meta">RequiresEntityConversion</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">RotationSpeedProxy</span> : <span class="title">MonoBehaviour</span>, <span class="title">IConvertGameObjectToEntity</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">float</span> DegreesPerSecond;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Convert</span>(<span class="params">Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> data = <span class="keyword">new</span> RotationSpeed &#123;</span><br><span class="line">            RadiansPerSecond = math.radians(DegreesPerSecond)</span><br><span class="line">        &#125;;</span><br><span class="line">        dstManager.AddComponentData(entity, data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RotationSpeedSystem.cs</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> Unity.Burst;</span><br><span class="line"><span class="keyword">using</span> Unity.Collections;</span><br><span class="line"><span class="keyword">using</span> Unity.Entities;</span><br><span class="line"><span class="keyword">using</span> Unity.Jobs;</span><br><span class="line"><span class="keyword">using</span> Unity.Mathematics;</span><br><span class="line"><span class="keyword">using</span> Unity.Transforms;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">RotationSpeedSystem</span> : <span class="title">JobComponentSystem</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> ComponentGroup _componentGroup;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnCreateManager</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        _componentGroup = GetComponentGroup(<span class="keyword">typeof</span>(Rotation), ComponentType.ReadOnly&lt;RotationSpeed&gt;());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    [<span class="meta">BurstCompile</span>]</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">struct</span> RotationSpeedJob : IJobChunk &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">float</span> DeltaTime;</span><br><span class="line">        <span class="keyword">public</span> ArchetypeChunkComponentType&lt;Rotation&gt; RotationType;</span><br><span class="line">        [<span class="meta">ReadOnly</span>] <span class="keyword">public</span> ArchetypeChunkComponentType&lt;RotationSpeed&gt; RotationSpeedType;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params">ArchetypeChunk chunk, <span class="keyword">int</span> chunkIndex, <span class="keyword">int</span> firstEntityIndex</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">var</span> chunkRotations = chunk.GetNativeArray(RotationType);</span><br><span class="line">            <span class="keyword">var</span> chunkRotationSpeeds = chunk.GetNativeArray(RotationSpeedType);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; chunk.Count; i++) &#123;</span><br><span class="line">                <span class="keyword">var</span> rotation = chunkRotations[i];</span><br><span class="line">                <span class="keyword">var</span> rotationSpeed = chunkRotationSpeeds[i];</span><br><span class="line"></span><br><span class="line">                chunkRotations[i] = <span class="keyword">new</span> Rotation &#123;</span><br><span class="line">                    Value = math.mul(math.normalize(rotation.Value),</span><br><span class="line">                        quaternion.AxisAngle(math.up(), rotationSpeed.RadiansPerSecond * DeltaTime))</span><br><span class="line">                &#125;;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> JobHandle <span class="title">OnUpdate</span>(<span class="params">JobHandle inputDeps</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> rotationType = GetArchetypeChunkComponentType&lt;Rotation&gt;();</span><br><span class="line">        <span class="keyword">var</span> rotationSpeedType = GetArchetypeChunkComponentType&lt;RotationSpeed&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> job = <span class="keyword">new</span> RotationSpeedJob &#123;</span><br><span class="line">            DeltaTime = Time.deltaTime,</span><br><span class="line">            RotationType = rotationType,</span><br><span class="line">            RotationSpeedType = rotationSpeedType</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> job.Schedule(_componentGroup, inputDeps);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到ECS的工作模式:</p>
+<ul>
+<li>ECS的行为(System)和数据(Component)分别实现</li>
+<li>Entity中存储多种数据(Component)</li>
+<li>如果存储在Entity中的Component满足本组的数据列表, 则由System执行行为</li>
+</ul>
+<h2 id="ECS优势"><a href="#ECS优势" class="headerlink" title="ECS优势"></a>ECS优势</h2><ol>
+<li>Component是sturct而不是class, 这意味着我们在存储数据是的时候不是通过new到heap中, 离散到存储, 而是在内存中连续对其存储. 值得注意的是, NativeArray将native内存直接暴露到managed code中, 从而使得managed和native之间数据共享.</li>
+<li>基于Burst Compile, 可以生成优于MonoBehabiour的机器码, 以增加预编译时间为代价, 提高运行时效率.</li>
+<li>基于Job System, System在调度jobs的时候会把任务放到队列中, 由worker threads多线程完成, 并通过细粒度话数据的读写权限, 加速执行, 提高CPU的利用效率.</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/04/26/Operating System/Operating System 05 - 进程通信/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Operating System 05 - 进程通信</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/03/13/Message Queue/Message Queue 09 - RabbitMQ单机性能分析/">
+        <span class="next-text nav-default">Message Queue 09 - RabbitMQ单机性能分析</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

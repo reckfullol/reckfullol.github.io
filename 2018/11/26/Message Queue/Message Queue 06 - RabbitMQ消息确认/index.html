@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Message Queue 06 - RabbitMQ消息确认">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/11/26/Message Queue/Message Queue 06 - RabbitMQ消息确认/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Message Queue 06 - RabbitMQ消息确认 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Message Queue 06 - RabbitMQ消息确认
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-26
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Message-Queue/">Message Queue</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RabbitMQ消息确认"><span class="toc-text">RabbitMQ消息确认</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Transaction"><span class="toc-text">Transaction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Confirm"><span class="toc-text">Confirm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC"><span class="toc-text">RPC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消息属性"><span class="toc-text">消息属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关联标识"><span class="toc-text">关联标识</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意事项"><span class="toc-text">注意事项</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="RabbitMQ消息确认"><a href="#RabbitMQ消息确认" class="headerlink" title="RabbitMQ消息确认"></a>RabbitMQ消息确认</h1><a id="more"></a>
+
+<p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543282707/mq/amqp_rpc.png" alt="amqp_rpc"></p>
+<p>在我们使用RabbitMQ过程中, 无法感知消息是否正确的到达broker. 如果不进行配置的话, 默认情况是不会返回任何信息给生产者的. 因此RabbitMQ提供了三种方法来进行消息的确认:</p>
+<h2 id="Transaction"><a href="#Transaction" class="headerlink" title="Transaction"></a>Transaction</h2><p>RabbitMQ与事务机制有关的三个方法:</p>
+<ol>
+<li>txSelect(): 用于将当前channel设置为transaction模式.</li>
+<li>txCommit(): 用于提交事务.</li>
+<li>txRollback(): 用于回滚事务.</li>
+</ol>
+<p>但是在开始事务模式的情况下, RabbitMQ的时延和吞吐量都有显著的影响, 因此假如不是必要的话, 尽量避免使用事务机制.</p>
+<h2 id="Confirm"><a href="#Confirm" class="headerlink" title="Confirm"></a>Confirm</h2><p>生产者将channel设置为confirm模式, 一旦channel进入confirm模式, 所有在该channel上发布的信息都会被指派一个唯一的ID(从1开始), 一旦消息被投递到所有匹配的队列之后, broker就会发送一个确认给发送者(包含消息的唯一ID), 这就使得生产者将消息正确的发送到了broker. 如果消息和队列是持久化的, 那么确认消息会在消息写入磁盘后发出. broker回传给生产者的确认消息中delivery-tag域中包含了确认消息的序列号, 此外broker也可以设置basic.ack的mulitple域, 表示到这个序列号之前的消息都已经得到了处理.</p>
+<p>confirm模式的好处在于异步, 一旦发布一条消息, 生产者应用程序就可以在等待信道返回确认的同时继续发送下一条消息, 当消息最终得到确认之后, 生产者应用便可以通过毁掉方法来处理该确认消息. 如果RabbitMQ因自身内部错误导致消息丢失, 就会发送一条nack消息, 生产者应用程序同样可以在回调方法中处理该nack消息.</p>
+<p>在channel被设置成confirm模式之后, 所有被publish的后续消息豆浆杯confirm或者被nack一次. 但是没有对消息confirm的快慢做任何保证, 并且同一条消息不会既被confirm又被nack.</p>
+<h2 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h2><p>一般来说通过RabbitMQ来实现RPC是比较容易的. 一个客户端发送请求队列, 服务器端将其应用到一个回复信息中. 为了接受到回复消息, 客户端需要在发送请求的时候同时发送一个回调队列(callback queue)的地址.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">result = channel.queue_declare(exclusive=<span class="literal">True</span>)</span><br><span class="line">callback_queue = result.method.queue</span><br><span class="line"></span><br><span class="line">channel.basic_publish(exchange=<span class="string">''</span>,</span><br><span class="line">                      routing_key=<span class="string">'rpc_queue'</span>,</span><br><span class="line">                      properties=pika.BasicProperties(</span><br><span class="line">                            reply_to = callback_queue,</span><br><span class="line">                            ),</span><br><span class="line">                      body=request)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ... and some code to read a response message from the callback_queue ...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="消息属性"><a href="#消息属性" class="headerlink" title="消息属性"></a>消息属性</h3><p>AMQP协议给消息预定义了一系列的14个属性, 以下几个较为常用:</p>
+<ol>
+<li>delivery_mode(投递模式): 将消息标记为持久化(值为2)或者暂存(除2以外的任何值).</li>
+<li>content_type(内容类型): 用来描述编码的mime-type.</li>
+<li>reply_to(回复目标): 通常用来命名回调队列.</li>
+<li>correlation_id(关联标识): 用来将RPC的响应和请求关联起来.</li>
+</ol>
+<h3 id="关联标识"><a href="#关联标识" class="headerlink" title="关联标识"></a>关联标识</h3><p>上述方法中, 每一个RPC都会请求新建一个回调队列, 更高效的方法是为每一个客户端建一个独立的回调队列. 但是此队列接收到一个响应的时候无法辨别出这个相应是来自于哪个请求. 因此correlation_id就可以将响应和请求匹配起来. 如果我们接手的correlation_id是未知的, 那就直接销毁掉, 因为他不属于我们的任何一条请求.</p>
+<p>接受到一条未知消息的时候不抛出错误, 而是将他忽略掉是源于解决服务端有可能发生的竞争情况. 尽管可能性不大, 但是RPC服务器还是有可能在已将应答发送给我们但还未将确认消息发送给请求方的时候宕掉. 如果发生这种情况, RPC服务器会在重启后重新请求, 这就是为什么客户端需要优雅的处理重复相应, 同时也要尽量保证幂等性.</p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><p>当一个问题被抛出的时候, 我们往往意识不到是本地调用还是由较慢的RPC调用引起的, 同时这使得系统具有不可预测性和给调试工作带来不必要的复杂性. 而且滥用RPC会导致不可维护的面条代码.</p>
+<p>因此我们要确保能够明确哪个函数是本地调用的, 哪个函数是远程调用的, 保证各个组建间的依赖明确, 明确客户端如何处理RPC服务器的宕机和长时间无响应的情况.</p>
+<p>如果在使用RPC有疑问, 可以使用异步管道来代替RPC的阻塞.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/11/27/Message Queue/Message Queue 07 - RabbitMQ持久化/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Message Queue 07 - RabbitMQ持久化</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/11/06/Message Queue/Message Queue 05 - RabbitMQ流量控制/">
+        <span class="next-text nav-default">Message Queue 05 - RabbitMQ流量控制</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

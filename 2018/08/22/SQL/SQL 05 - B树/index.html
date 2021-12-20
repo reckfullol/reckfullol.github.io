@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="SQL 05 - B树">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/08/22/SQL/SQL 05 - B树/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> SQL 05 - B树 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          SQL 05 - B树
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-22
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/SQL/">SQL</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#B树"><span class="toc-text">B树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#B树-1"><span class="toc-text">B树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-树"><span class="toc-text">B-树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-树-1"><span class="toc-text">B+树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-树与B-树的区别"><span class="toc-text">B-树与B+树的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B-树相较于红黑树的优势"><span class="toc-text">B+树相较于红黑树的优势</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h1><a id="more"></a>
+
+<h2 id="B树-1"><a href="#B树-1" class="headerlink" title="B树"></a>B树</h2><p>B树即是balance tree, 二叉搜索树.</p>
+<ol>
+<li><p>所有非叶子节点至多拥有两个儿子.</p>
+</li>
+<li><p>所有节点存储一个关键字.</p>
+</li>
+<li><p>所有非叶子节点的左指针指向小于其关键字的子树, 右指针指向大于其关键字的子树.</p>
+</li>
+</ol>
+<p>B树在多次插入删除后, 复杂度有可能会退化, 最终退化到线性时间复杂度, 因此, 需要通过类似AVL树算法对B树进行维护.</p>
+<h2 id="B-树"><a href="#B-树" class="headerlink" title="B-树"></a>B-树</h2><p>B-树是一种平衡的多路查找树, B-树的所有节点的孩子节点数最大值称为B-数的阶, 用m表示. 一个节点有k个子节点, 那么自身有k-1个关键字.</p>
+<ol>
+<li><p>树中每个节点最多有m个子节点</p>
+</li>
+<li><p>若根节点不是叶节点, 那么至少有两个子节点.</p>
+</li>
+<li><p>除根节点外, 所有非叶节点至少有ceil(m/2)个子节点.</p>
+</li>
+</ol>
+<p>B-树中, 元素的添加删除可能会导致节点的拆分合并. B-树通过约束所有叶子节点在相同深度来保持平衡. 深度在元素添加至树的过程中缓慢增长, 而整体深度极少的增长.</p>
+<h2 id="B-树-1"><a href="#B-树-1" class="headerlink" title="B+树"></a>B+树</h2><p>B+树和B-树类似, 但是有几点不同:</p>
+<ol>
+<li><p>非叶节点的子节点个数与关键字个数相同.</p>
+</li>
+<li><p>非叶节点的子节点指针P[i], 指向关键字属于[P[i], P[i+1])的子节点, 而B树两边都是开区间.</p>
+</li>
+<li><p>为所有叶节点增加一个向后的指针, 使得其成为一个关键字有序的链表.</p>
+</li>
+<li><p>所有的关键字都在叶节点出现. 非叶节点相当于是叶节点的索引, 叶节点相当于是存储数据的数据层.</p>
+</li>
+</ol>
+<h2 id="B-树与B-树的区别"><a href="#B-树与B-树的区别" class="headerlink" title="B-树与B+树的区别"></a>B-树与B+树的区别</h2><ol>
+<li><p>非叶节点的关键字个数不同, B+树非叶节点有m个关键字, 其子节点也有m个. B-树有m个子节点的情况下, 当前节点的关键字个数为m-1.</p>
+</li>
+<li><p>节点的数据类型不同. B-树的非叶节点保存数据和子节点的指针. B+数只有叶节点存储数据. 因此在遍历具体数据的时候, B+树只要按照链表遍历, 而B-树需要在树上进行中序遍历. 所以B+树常用于数据库索引, 因为在区间查询的情况下更高效, 而B-树常用于文件索引.</p>
+</li>
+</ol>
+<h2 id="B-树相较于红黑树的优势"><a href="#B-树相较于红黑树的优势" class="headerlink" title="B+树相较于红黑树的优势"></a>B+树相较于红黑树的优势</h2><ol>
+<li><p>更少的查找次数</p>
+<p> 平衡树查找的时间复杂度等于树的平均深度, 深度为以节点出度为底, 节点个数的对数.</p>
+<p> 红黑树的出度相较于B+要小很多, 所以深度也远大于B+数, 因此查找次数也多.</p>
+</li>
+<li><p>利用计算机预读特性</p>
+<p> 为了减少磁盘I/O, 磁盘往往不是严格读取, 而是会进行预读, 用以利用局部性原理. 在预读过程中, 磁盘进行顺序读取, 这不需要进行磁盘寻道, 只需要很短的旋转时间.</p>
+<p> 操作系统一般将内存和磁盘分割成固定大小的快, 每一块成为一页, 这是磁盘和内存交换的单元. 数据库将索引的一个节点大小设置为页的大小, 使得一次I/O就能完全载入一个节点, 并且利用预读特性, 相邻节点也可以被预先加载.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/08/23/SQL/SQL 06 - 索引优化/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">SQL 06 - 索引优化</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/08/22/SQL/SQL 04 - 聚簇索引与非聚簇索引/">
+        <span class="next-text nav-default">SQL 04 - 聚簇索引与非聚簇索引</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

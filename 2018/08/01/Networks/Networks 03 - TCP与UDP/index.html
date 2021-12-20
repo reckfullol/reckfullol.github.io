@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Networks 03 - TCP与UDP">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/08/01/Networks/Networks 03 - TCP与UDP/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Networks 03 - TCP与UDP - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Networks 03 - TCP与UDP
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Networks/">Networks</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP与UDP"><span class="toc-text">TCP与UDP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#区别"><span class="toc-text">区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用场景"><span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#伪首部"><span class="toc-text">伪首部</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UDP首部"><span class="toc-text">UDP首部</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP首部"><span class="toc-text">TCP首部</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="TCP与UDP"><a href="#TCP与UDP" class="headerlink" title="TCP与UDP"></a>TCP与UDP</h1><a id="more"></a>
+
+<h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><ol>
+<li><p>TCP面向连接, UDP无连接.</p>
+</li>
+<li><p>TCP提供可靠服务, 通过TCP连接传输的数据, 无差错, 不丢失, 不重复, 按序到达. UDP尽自己最大努力交付, 不保证可靠交付.</p>
+</li>
+<li><p>TCP面向字节流, UDP面向报文.</p>
+</li>
+<li><p>UDP没有拥塞控制.</p>
+</li>
+<li><p>TCP连接只能是点到点. UDP支持一对一, 一对多, 多对多的交互通信.</p>
+</li>
+<li><p>TCP首部20字节, UDP首部8字节.</p>
+</li>
+<li><p>TCP逻辑通信信道是全双工的可靠信道, UDP则是不可靠信道.</p>
+</li>
+</ol>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><ol>
+<li><p>TCP, 应用在对网络通讯质量有要求高的时候, 比如整个数据要准确无误的传给对方, 如HTTP, FTP, SMTP.</p>
+</li>
+<li><p>UDP, 应用在对网络通讯质量要求不高的时候, 要求网络通讯速度尽可能的快, 如语音, 视频, TFTP.</p>
+</li>
+</ol>
+<h2 id="伪首部"><a href="#伪首部" class="headerlink" title="伪首部"></a>伪首部</h2><p>伪首部通常有TCP伪首部和UDP伪首部. 在伪首部中, 有4字节源IP地址, 4字节目的IP地址, 1字节填充0, 1字节协议, 2字节包长度. 通过伪首部的校验, 可以确定是否是发送给本机的, 通过首部协议字段, 可以确认有没有误传.</p>
+<p>伪首部是一个长度为12字节的虚拟数据结构, 其中的信息是从数据报所在的IP分组头中提取, 既不向下传送也不向上提交, 仅仅是为了计算校验和, 用以保证传输到正确地址和数据的正确性.</p>
+<h2 id="UDP首部"><a href="#UDP首部" class="headerlink" title="UDP首部"></a>UDP首部</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1535150219/os/UDP.jpg" alt="UDP"></p>
+<p>首部字段只有8字节, 包括2字节源端口, 2字节目的端口, 2字节长度, 2字节检验和. 12字节的伪首部是为了计算检验和临时添加的.</p>
+<h2 id="TCP首部"><a href="#TCP首部" class="headerlink" title="TCP首部"></a>TCP首部</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1535150219/os/TCP.png" alt="TCP"></p>
+<p>首部字段有20字节固定长度, 2字节源端口, 2字节目的端口, 4字节序号, 4字节确认号, 还有数据偏移, 保留字段, 标志位, 窗口大小, 检验和和紧急指针.</p>
+<p>其中有些字段需要单独说明:</p>
+<ul>
+<li>序号: 用于对字节流进行编号, 表示当前包中的第一个字节的编号.</li>
+<li>确认号: 期望收到的下一个报文段的编号.</li>
+<li>数据偏移: 是指数据部分距离报文段起始处的偏移量, 实际上是指首部长度.</li>
+<li>确认ACK: 当ACK=1时, 确认号字段有效, 否则无效. TCP规定在建立连接后所有传送的报文段都必须把ACK置1.</li>
+<li>同步SYN: 在连接建立时用来同步序号. 当SYN = 1, ACK = 0表示这是一个请求连接报文段. 若对方同意建立连接, 则响应报文中SYN = 1, ACK = 1.</li>
+<li>终止FIN: 用来释放一个连接, 当FIN = 1时, 表示这个报文段的发送方数据已经发送完毕, 并要求释放连接.</li>
+<li>窗口: 窗口值作为接收方让发送方设置其发送窗口的依据. 之所以要有这个设置, 是因为接收方的数据缓存空间有限.</li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/08/01/Networks/Networks 04 - 链路层作用/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Networks 04 - 链路层作用</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/08/01/Networks/Networks 02 - TCP四次挥手/">
+        <span class="next-text nav-default">Networks 02 - TCP四次挥手</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

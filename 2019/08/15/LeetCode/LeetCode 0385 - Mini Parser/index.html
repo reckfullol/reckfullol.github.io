@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="LeetCode 0385 - Mini Parser">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/08/15/LeetCode/LeetCode 0385 - Mini Parser/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> LeetCode 0385 - Mini Parser - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          LeetCode 0385 - Mini Parser
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-15
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/LeetCode/">LeetCode</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mini-Parser"><span class="toc-text">Mini Parser</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Desicription"><span class="toc-text">Desicription</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Solution"><span class="toc-text">Solution</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="Mini-Parser"><a href="#Mini-Parser" class="headerlink" title="Mini Parser"></a>Mini Parser</h1><a id="more"></a>
+
+<h2 id="Desicription"><a href="#Desicription" class="headerlink" title="Desicription"></a>Desicription</h2><p>Given a nested list of integers represented as a string, implement a parser to deserialize it.</p>
+<p>Each element is either an integer, or a list – whose elements may also be integers or other lists.</p>
+<p><strong>Note:</strong> You may assume that the string is well-formed:</p>
+<ul>
+<li>String is non-empty.</li>
+<li>String does not contain white spaces.</li>
+<li>String contains only digits 0-9, [, - ,, ].</li>
+</ul>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Given s = &quot;324&quot;,</span><br><span class="line"></span><br><span class="line">You should return a NestedInteger object which contains a single integer 324.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Given s = &quot;[123,[456,[789]]]&quot;,</span><br><span class="line"></span><br><span class="line">Return a NestedInteger object containing a nested list with 2 elements:</span><br><span class="line"></span><br><span class="line">1. An integer containing value 123.</span><br><span class="line">2. A nested list containing two elements:</span><br><span class="line">    i.  An integer containing value 456.</span><br><span class="line">    ii. A nested list with one element:</span><br><span class="line">         a. An integer containing value 789.</span><br></pre></td></tr></table></figure>
+
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * // This is the interface that allows for creating nested lists.</span></span><br><span class="line"><span class="comment"> * // You should not implement it, or speculate about its implementation</span></span><br><span class="line"><span class="comment"> * class NestedInteger &#123;</span></span><br><span class="line"><span class="comment"> *   public:</span></span><br><span class="line"><span class="comment"> *     // Constructor initializes an empty nested list.</span></span><br><span class="line"><span class="comment"> *     NestedInteger();</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     // Constructor initializes a single integer.</span></span><br><span class="line"><span class="comment"> *     NestedInteger(int value);</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     // Return true if this NestedInteger holds a single integer, rather than a nested list.</span></span><br><span class="line"><span class="comment"> *     bool isInteger() const;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     // Return the single integer that this NestedInteger holds, if it holds a single integer</span></span><br><span class="line"><span class="comment"> *     // The result is undefined if this NestedInteger holds a nested list</span></span><br><span class="line"><span class="comment"> *     int getInteger() const;</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     // Set this NestedInteger to hold a single integer.</span></span><br><span class="line"><span class="comment"> *     void setInteger(int value);</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     // Set this NestedInteger to hold a nested list and adds a nested integer to it.</span></span><br><span class="line"><span class="comment"> *     void add(const NestedInteger &amp;ni);</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     // Return the nested list that this NestedInteger holds, if it holds a nested list</span></span><br><span class="line"><span class="comment"> *     // The result is undefined if this NestedInteger holds a single integer</span></span><br><span class="line"><span class="comment"> *     const vector&lt;NestedInteger&gt; &amp;getList() const;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">NestedInteger <span class="title">deserialize</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> <span class="built_in">stack</span> = <span class="built_in">std</span>::<span class="built_in">stack</span>&lt;NestedInteger&gt;&#123;&#125;;</span><br><span class="line">        <span class="keyword">int</span> number = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">bool</span> flag = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">bool</span> haveNumber = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : s) &#123;</span><br><span class="line">            <span class="keyword">switch</span>(c) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">'['</span>:</span><br><span class="line">                    <span class="built_in">stack</span>.push(NestedInteger&#123;&#125;);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">']'</span>:</span><br><span class="line">                    <span class="keyword">if</span>(flag == <span class="literal">false</span>) &#123;</span><br><span class="line">                        number = -number;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span>(haveNumber == <span class="literal">true</span>) &#123;</span><br><span class="line">                        <span class="built_in">stack</span>.top().add(NestedInteger&#123;number&#125;);</span><br><span class="line">                        number = <span class="number">0</span>;</span><br><span class="line">                        flag = <span class="literal">true</span>;</span><br><span class="line">                        haveNumber = <span class="literal">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span>(<span class="built_in">stack</span>.size() == <span class="number">1</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="built_in">stack</span>.top();</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">auto</span> tmpNestedInteger = <span class="built_in">stack</span>.top();</span><br><span class="line">                        <span class="built_in">stack</span>.pop();</span><br><span class="line">                        <span class="built_in">stack</span>.top().add(tmpNestedInteger);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">','</span>:</span><br><span class="line">                    <span class="keyword">if</span>(flag == <span class="literal">false</span>) &#123;</span><br><span class="line">                        number = -number;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span>(haveNumber == <span class="literal">true</span>) &#123;</span><br><span class="line">                        <span class="built_in">stack</span>.top().add(NestedInteger&#123;number&#125;);</span><br><span class="line">                        number = <span class="number">0</span>;</span><br><span class="line">                        flag = <span class="literal">true</span>;</span><br><span class="line">                        haveNumber = <span class="literal">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">'-'</span>:</span><br><span class="line">                    flag = <span class="literal">false</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    number = number * <span class="number">10</span> + c - <span class="string">'0'</span>;</span><br><span class="line">                    haveNumber = <span class="literal">true</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(number != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(flag == <span class="literal">false</span>) &#123;</span><br><span class="line">                number = -number;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(haveNumber == <span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="built_in">stack</span>.push(NestedInteger&#123;number&#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">stack</span>.empty() ? NestedInteger&#123;<span class="number">0</span>&#125; : <span class="built_in">stack</span>.top();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/08/15/LeetCode/LeetCode 0386 - Lexicographical Numbers/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0386 - Lexicographical Numbers</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/08/13/LeetCode/LeetCode 0384 - Shuffle an Array/">
+        <span class="next-text nav-default">LeetCode 0384 - Shuffle an Array</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

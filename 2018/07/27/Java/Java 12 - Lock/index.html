@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Java 12 - Lock">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/07/27/Java/Java 12 - Lock/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Java 12 - Lock - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Java 12 - Lock
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-27
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Java/">Java</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Lock"><span class="toc-text">Lock</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#synchronized缺陷"><span class="toc-text">synchronized缺陷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lock的方法"><span class="toc-text">Lock的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获得锁的方法"><span class="toc-text">获得锁的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几个概念"><span class="toc-text">几个概念</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a>Lock</h1><a id="more"></a>
+
+<h2 id="synchronized缺陷"><a href="#synchronized缺陷" class="headerlink" title="synchronized缺陷"></a>synchronized缺陷</h2><ol>
+<li><p>当线程等待IO或者调用sleep()之类的方法, 导致被阻塞, 同时又没有释放掉锁, 那么其他线程就会一直在等待锁的释放. 那么如果线程可以定时放弃等待或者响应中断, 就可以提高执行效率. 这可以通过Lock实现.</p>
+</li>
+<li><p>当有多个线程读写文件时, 如果用synchronized来实现同步, 只能由一个线程占有锁, 效率低.</p>
+</li>
+</ol>
+<h2 id="Lock的方法"><a href="#Lock的方法" class="headerlink" title="Lock的方法"></a>Lock的方法</h2><p>Lock不是Java的内置, 而是一个类, 并通过这个类实现同步访问. 要注意的是, synchronized不需要手动释放锁, 当synchronized段执行完, 系统会自动让线程释放锁的占用. 而Lock需要手动释放锁, 如果没有主动释放, 有可能出现死锁的现象.</p>
+<p>Lock是一个接口, 下面有lock(), tryLock(), tryLock(long time, TimeUnit unit), lockInterruptibly()是用来获取锁的, unLock()是用来释放锁的.</p>
+<h3 id="获得锁的方法"><a href="#获得锁的方法" class="headerlink" title="获得锁的方法"></a>获得锁的方法</h3><ol>
+<li><p>lock()</p>
+<p> lock()是最常用的方法, 用来获得锁. 如果锁已经被其他线程获取, 则进行等待.</p>
+<p> 注意采用Lock, 必须主动去释放锁, 并且必须在try-catch块中进行, 将释放的过程放在finally块中, 保证锁一定被释放.</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Lock lock = <span class="keyword">new</span> Lock();</span><br><span class="line">lock.lock();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// do</span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    lock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>tryLock()</p>
+<p> tryLock()有返回值, 标志是否获得了锁. tryLock(long time, TimeUnit unit)则是如果拿不到锁会等待一定时间. 如果拿到了就返回true, 如果在时限内拿不到锁, 就返回false.</p>
+</li>
+<li><p>lockInterruptibly()</p>
+<p> lockInterruptibly()方法获得锁时, 如果线程在等待锁, 那么这个线程是可以响应中断的. 即其他线程调用waitingThread.unterrupt()就可以打断这个等待中的线程.</p>
+<p> 被打断的线程会抛出InterruptedException.</p>
+</li>
+</ol>
+<h2 id="几个概念"><a href="#几个概念" class="headerlink" title="几个概念"></a>几个概念</h2><ol>
+<li><p>可重入锁</p>
+<p> 如果锁具备可重入性, synchronized和ReentrantLock都是可重入锁. 比如有两个被synchronized修饰的方法, 那么线程获得锁调用方法1是, 可以直接调用方法2, 而不用重新获得锁.</p>
+</li>
+<li><p>可中断锁</p>
+<p> synchronized是不可中断锁, Lock是可中断锁. 即在block态的线程是否可以响应中断或者中断自身. lockInterruptibly()就提现了可中断性.</p>
+</li>
+<li><p>公平锁</p>
+<p> 公平锁尽量以请求锁的顺序来获得锁. synchronized是非公平锁, 无法保证等待的线程获得锁的顺序.</p>
+<p> ReentrantLock和ReentrantReadWriteLock默认是非公平锁, 但是可以设置为公平锁.</p>
+</li>
+<li><p>读写锁</p>
+<p> 读写锁将对资源的访问分成了读和写两种模式. 因为前文已经写过, 再次不再赘述.</p>
+</li>
+<li><p>自旋锁</p>
+<p> 当其他线程占用锁的时候, 不进入block态, 而是循环检测能否获得临界区锁.</p>
+</li>
+<li><p>偏向锁</p>
+<p> 大多数情况下不仅锁不存在多线程竞争, 而且总是由同一个线程多次获得, 为了让线程获得锁的代价更低, 因此引入了偏向锁. 当一个线程访问同步块并获取锁时, 会在对象头和栈帧的锁记录里存储锁偏向的线程id, 以后线程进入和退出同步块时不需要花费CAS操作来加锁和解锁, 只需要检查一下对象头的Mark Word里面是否存储着当前线程的偏向锁. 如果测试成功, 那么获得锁, 否则测试一下Mark Word中偏向锁的标志是否设置, 如果设置了, 那么尝试使用CAS将对象头的偏向锁设置为当前线程.</p>
+</li>
+<li><p>轻量级锁</p>
+<p> 在同步之前会在当前线程的栈帧中创建用于存储锁记录的空间, 并将对象头中的Mark Word复制到锁记录中, 然后线程尝试用CAS将对象头中的Mark Word替换为指向锁记录中的指针. 如果成功就获得锁, 否则通过自旋来获得锁.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/07/28/Java/Java 13 - 判断对象是否存活/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Java 13 - 判断对象是否存活</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/26/Java/Java 11 - 逃逸分析/">
+        <span class="next-text nav-default">Java 11 - 逃逸分析</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

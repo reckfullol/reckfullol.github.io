@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Java 02 - 值传递与引用传递">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/07/11/Java/Java 02 - 值传递与引用传递/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Java 02 - 值传递与引用传递 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Java 02 - 值传递与引用传递
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-11
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Java/">Java</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#值传递与引用传递"><span class="toc-text">值传递与引用传递</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#几个误区"><span class="toc-text">几个误区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#求值策略-Evaluation-Strategy"><span class="toc-text">求值策略(Evaluation Strategy)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值传递与引用传递的区别"><span class="toc-text">值传递与引用传递的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几个解释"><span class="toc-text">几个解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-foreach"><span class="toc-text">Java foreach</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="值传递与引用传递"><a href="#值传递与引用传递" class="headerlink" title="值传递与引用传递"></a>值传递与引用传递</h1><a id="more"></a>
+
+<h2 id="几个误区"><a href="#几个误区" class="headerlink" title="几个误区"></a>几个误区</h2><ol>
+<li><p>Java是引用传递.</p>
+</li>
+<li><p>值类型是值传递, 引用类型是引用传递.</p>
+</li>
+<li><p>所有的都是值传递, 因为引用本质上只有个值, 本质上是指针.</p>
+</li>
+<li><p>声明的参数是引用类型, 就是引用传递; 声明的参数是一般类型或者指针的就是值传递.</p>
+</li>
+</ol>
+<h2 id="求值策略-Evaluation-Strategy"><a href="#求值策略-Evaluation-Strategy" class="headerlink" title="求值策略(Evaluation Strategy)"></a>求值策略(Evaluation Strategy)</h2><p>首先我们要知道, 值传递和引用传递是一种求值策略(<a href="https://en.wikipedia.org/wiki/Evaluation_strategy" target="_blank" rel="noopener">Evaluation Stragtegy</a>), 表示的是调用函数的时候, 对于参数传递方式的描述, 而不是对参数本身类型的描述. 值类型和引用类型是两种内存分配方式, 值类型是在调用栈上分配, 而引用类型是在堆上分配. 一个是描述的内存分配方式, 一个是描述参数求值策略, 二者并无依赖和约束关系.</p>
+<p>当我们进行函数调用的时候, 为函数所提供的实参, 可以是常量, 也可以是变量, 甚至可以是其他函数的返回值, 但这些实参的形式都称之为表达式, 求值就是对表达式化简并求解值的过程.</p>
+<p>求值策略关注的点在于, 表达式在调用函数的过程中, 求值的实际, 值的形式的选取等问题. 求值的时机, 可以在函数调用之前, 也可以在函数调用之后, 由被调用者自己求值. 这里的调用后求值, 可以理解为lazy load.</p>
+<p>我们根据求值时间和传值方式, 对不同的求值策略进行分类:</p>
+<table>
+<thead>
+<tr>
+<th>求值策略</th>
+<th>求值时间</th>
+<th>传值方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>值传递(pass by value)</td>
+<td>调用前</td>
+<td>值的结果(原值的副本)</td>
+</tr>
+<tr>
+<td>引用传递(pass by reference)</td>
+<td>调用前</td>
+<td>原值(原始对象, 不生成副本)</td>
+</tr>
+<tr>
+<td>名传递(pass by name)</td>
+<td>调用后(用到后求值)</td>
+<td>与值无关的一个名</td>
+</tr>
+</tbody></table>
+<h2 id="值传递与引用传递的区别"><a href="#值传递与引用传递的区别" class="headerlink" title="值传递与引用传递的区别"></a>值传递与引用传递的区别</h2><p>我们重点看一下值传递和引用传递的区别, 首先是二者在行为表象上的区别:</p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>值传递</th>
+<th>引用传递</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>根本区别</td>
+<td>会创建副本</td>
+<td>不创建副本</td>
+</tr>
+<tr>
+<td>所以</td>
+<td>函数中无法改变原始对象</td>
+<td>函数中可以改变原始对象</td>
+</tr>
+</tbody></table>
+<p>这里所说的改变, 是指把一个变量指向另一个对象, 而不是仅仅改变属性或者成员. 因此我们说Java是值传递, 因为调用时会发生copy, 实参不能指向另一个对象, 而不是说被传递东西的本质是一个value, 毕竟计算机里什么都是value.</p>
+<p>因此我们知道, 这些行为与参数本身是值类型还是引用类型无关. 对于值传递, 无论是值类型还是引用类型, 都会在调用栈上创建一个副本, 不同的是, 对于值类型而言, 这个副本本身就是原始值的全部复制, 而对于引用类型而言, 由于引用类型的实例在堆上, 所以栈上只有他的一个引用, 其副本也是这个引用的复制, 而不是整个对象的复制.</p>
+<p>因此值类型和引用类型的最大区别在于, 值类型作为参数被复制, 但是这不是值类型的特性, 只是值传递带来的效果, 和值类型本身没有关系.</p>
+<p>综上所述, 我们对Java的函数调用方式可以描述为: 参数是通过值传递的方式, 传递的值是一个引用的拷贝.</p>
+<p>我们可以通过C++来表现值传递和引用传递:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ByValue</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">    a = a + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ByRef</span><span class="params">(<span class="keyword">int</span>&amp; a)</span> </span>&#123;</span><br><span class="line">    a = a + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ByPointer</span><span class="params">(<span class="keyword">int</span>* a)</span> </span>&#123;</span><br><span class="line">    *a = *a + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argv, <span class="keyword">char</span>** args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> v = <span class="number">1</span>;</span><br><span class="line">    ByValue(v);</span><br><span class="line">    ByRef(v);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Pass by Reference</span></span><br><span class="line">    ByPointer(&amp;v);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Pass by Value</span></span><br><span class="line">    <span class="keyword">int</span>* vp = &amp;v;</span><br><span class="line">    ByPointer(vp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是, 从行为考虑, 才是求值策略的本意. 如果把所有东西都抽象成值, 从数据考虑问题, 那就根本没有必要来引入求值策略这一概念了.</p>
+<p>在C#中, 可以通过来ref/out来实现引用传递, 没有ref/out就是值传递.</p>
+<h2 id="几个解释"><a href="#几个解释" class="headerlink" title="几个解释"></a>几个解释</h2><p>针对于上文的几个误区, 我们来一一进行解释:</p>
+<ol>
+<li><p>引用传递是指的求值方式, 而不是说Java的参数类型是对对象的引用. 并且Java在函数调用时, 是通过值传递的方式, 传递引用的副本.</p>
+</li>
+<li><p>一个是描述的内存分配方式, 一个是描述参数求值策略, 二者并无依赖和约束关系.</p>
+</li>
+<li><p>从行为考虑, 才是求值策略的本意. 如果把所有东西都抽象成值, 从数据考虑问题, 那就根本没有必要来引入求值策略这一概念了.</p>
+</li>
+<li><p>同2.</p>
+</li>
+</ol>
+<h2 id="Java-foreach"><a href="#Java-foreach" class="headerlink" title="Java foreach"></a>Java foreach</h2><p>Java中的foreach是对迭代到当前的对象进行完全拷贝, 而不是获得他的引用拷贝.</p>
+<p>Syntax:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (type <span class="keyword">var</span> : array) &#123; </span><br><span class="line">    statements using <span class="keyword">var</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>等同于:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123; </span><br><span class="line">    type <span class="keyword">var</span> = arr[i];</span><br><span class="line">    statements using <span class="keyword">var</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此对当前的对象改动, 并不会改变容器中的实际值, 这是值得注意的.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/07/12/Java/Java 03 - Thread与Runnable/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Java 03 - Thread与Runnable</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/05/LeetCode/LeetCode 0228 - Summary Ranges/">
+        <span class="next-text nav-default">LeetCode 0228 - Summary Ranges</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

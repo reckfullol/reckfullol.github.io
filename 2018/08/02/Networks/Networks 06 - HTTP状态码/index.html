@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Networks 06 - HTTP状态码">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/08/02/Networks/Networks 06 - HTTP状态码/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Networks 06 - HTTP状态码 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Networks 06 - HTTP状态码
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Networks/">Networks</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#网络-06-HTTP状态码"><span class="toc-text">网络 06 - HTTP状态码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1XX"><span class="toc-text">1XX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2XX"><span class="toc-text">2XX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3XX"><span class="toc-text">3XX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4XX"><span class="toc-text">4XX</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5XX"><span class="toc-text">5XX</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="网络-06-HTTP状态码"><a href="#网络-06-HTTP状态码" class="headerlink" title="网络 06 - HTTP状态码"></a>网络 06 - HTTP状态码</h1><a id="more"></a>
+
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>类别</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1XX</td>
+<td>Informational(信息性状态码)</td>
+<td>接收的请求正在处理</td>
+</tr>
+<tr>
+<td>2XX</td>
+<td>Success(成功状态码)</td>
+<td>请求正常处理完毕</td>
+</tr>
+<tr>
+<td>3XX</td>
+<td>Redirection(重定向状态码)</td>
+<td>需要进行附加操作以完成操作</td>
+</tr>
+<tr>
+<td>4XX</td>
+<td>Client Error(客户端错误状态码)</td>
+<td>服务器无法处理请求</td>
+</tr>
+<tr>
+<td>5XX</td>
+<td>Server Error(服务器错误状态码)</td>
+<td>服务器处理请求出错</td>
+</tr>
+</tbody></table>
+<h2 id="1XX"><a href="#1XX" class="headerlink" title="1XX"></a>1XX</h2><ul>
+<li>100 Continue: 表示到目前为止都正常, 客户端可以继续发送请求或者忽略这个响应.</li>
+</ul>
+<h2 id="2XX"><a href="#2XX" class="headerlink" title="2XX"></a>2XX</h2><ul>
+<li><p>200 OK</p>
+</li>
+<li><p>204 No Content: 请求已经成功处理, 但是返回的响应报文不包含实体的主体部分. 一般发生在只需要客户端向服务器发送消息, 而不需要返回数据时.</p>
+</li>
+<li><p>206 Partial Content: 表示客户端进行了范围请求. 响应报文包含由Content-Range指定范围的实体内容.</p>
+</li>
+</ul>
+<h2 id="3XX"><a href="#3XX" class="headerlink" title="3XX"></a>3XX</h2><ul>
+<li><p>301 Moved Permanently: 永久性重定向.</p>
+</li>
+<li><p>302 Found: 临时性重定向.</p>
+</li>
+<li><p>303 See Oeher: 和302有相同的功能, 但是303明确要求客户端应该采用GET来获取资源.</p>
+</li>
+<li><p>304 Not Modified: 如果请求报文包含一条件, 例如: If-Match, If-Modified-Since, If-None-Match, If-Range, If-Unmodified-Since, 那么在不满足条件下会返回304.</p>
+</li>
+<li><p>307 Temporary Redirect: 临时重定向, 和304含义类似, 但是要求浏览器不能把重定向的请求动词由POST改为GET.</p>
+</li>
+</ul>
+<h2 id="4XX"><a href="#4XX" class="headerlink" title="4XX"></a>4XX</h2><ul>
+<li><p>400 Bad Request: 请求报文中存在语法错误.</p>
+</li>
+<li><p>401 Unauthorized: 表示发送的请求需要有认证消息(BASIC认证, DIGEST认证). 如果之前已进行过一次请求, 则表示用户认证失败.</p>
+</li>
+<li><p>403 Forbidden: 请求被拒绝, 服务器端没有必要给出拒绝的详细理由.</p>
+</li>
+<li><p>404 Not Found.</p>
+</li>
+</ul>
+<h2 id="5XX"><a href="#5XX" class="headerlink" title="5XX"></a>5XX</h2><ul>
+<li><p>500 Internal Server Error: 服务器正在执行请求时发生错误.</p>
+</li>
+<li><p>503 Service Unavailable: 服务器暂时处于超负载或正在进行停机维护, 现在无法处理请求.</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/08/02/Networks/Networks 07 - HTTP 2.0/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Networks 07 - HTTP 2.0</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/08/01/Networks/Networks 05 - TCP拥塞控制/">
+        <span class="next-text nav-default">Networks 05 - TCP拥塞控制</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

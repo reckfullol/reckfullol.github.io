@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Java 04 - synchronized">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/07/12/Java/Java 04 - synchronized/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Java 04 - synchronized - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Java 04 - synchronized
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-12
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Java/">Java</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#synchronized"><span class="toc-text">synchronized</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#几个概念"><span class="toc-text">几个概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synchronized-1"><span class="toc-text">synchronized</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几点注意"><span class="toc-text">几点注意</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#block-与-wait"><span class="toc-text">block 与 wait</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h1><a id="more"></a>
+
+<h2 id="几个概念"><a href="#几个概念" class="headerlink" title="几个概念"></a>几个概念</h2><ol>
+<li><p>临界资源: 每次仅允许一个进程访问的资源.</p>
+</li>
+<li><p>临界区: 对临界资源访问的区域.</p>
+</li>
+<li><p>互斥: 多个进程在同一时刻只有一个进程能进入临界区.</p>
+</li>
+</ol>
+<h2 id="synchronized-1"><a href="#synchronized-1" class="headerlink" title="synchronized"></a>synchronized</h2><p>首先我们需要知道互斥锁的概念, 是能够达到互斥访问目的的锁. 那么如果对临界资源加上互斥锁, 当一个线程在访问该临界资源的时候, 其他线程只能等待.</p>
+<p>在Java中, 每个对象都拥有锁标记(monitor), 也称为监视器. 多线程同时访问某一对象的时候, 只有获取了该对象所的线程才能访问.</p>
+<p>在Java中, 可以使用synchronized关键字来修饰一个方法或者一个代码块, 当某个线程调用被修饰的方法或者代码块时, 这个线程便获得了这个对象的锁, 其余线程就无法访问. 只有等待这个线程退出临界区, 才会释放该对象的锁, 其余线程才能访问.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyArrayList</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;Integer&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(Thread thread)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread "</span> + thread.getName() + <span class="string">" : insert "</span> + i);</span><br><span class="line">            arrayList.add(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">var</span> myArrayList = <span class="keyword">new</span> MyArrayList();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; myArrayList.insert(Thread.currentThread())).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; myArrayList.insert(Thread.currentThread())).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="几点注意"><a href="#几点注意" class="headerlink" title="几点注意"></a>几点注意</h2><ol>
+<li><p>当一个线程在访问某一个对象的synchronized方法时, 其他线程不能访问该对象的其他synchronized方法. 因为一个对象只有一个锁. 当该线程获得对象的锁后, 其他线程便无法获得该对象的锁, 自然不能访问其synchronized方法.</p>
+</li>
+<li><p>当一个线程在访问某一个对象的synchronized方法是, 其他线程可以访问非synchronized方法, 因为这并不需要获得对象锁.</p>
+</li>
+<li><p>如果一个线程访问某一个对象的非static synchronized方法, 另一个线程访问同一对象的static synchronized方法, 并不会发生互斥. 因为一个占用的是对象锁, 一个占用的是类锁.</p>
+</li>
+<li><p>对于synchronized方法或者代码块, 当出现异常的时候, JVM会自动释放线程占用的锁, 因此不会由于异常导致死锁的现象.</p>
+</li>
+</ol>
+<h2 id="block-与-wait"><a href="#block-与-wait" class="headerlink" title="block 与 wait"></a>block 与 wait</h2><p>如果我们对含有synchronized方法或者代码段的class进行反编译, 就可以从字节码中看到monitorenter和monitorexit两条指令. 前者会让对象锁计数加一, 后者减一. 类似于操作系统中的PV原语.</p>
+<p>值得注意的是线程的block和wait状态是两个完全不同的状态.</p>
+<ol>
+<li><p>block状态是指线程想访问对象的synchronized方法或者代码块, 但是对象的锁已经被其他线程持有, 那么该线程变成block态, 进入阻塞队列, 等待对象锁的释放. </p>
+</li>
+<li><p>wait状态是已经持有对象锁的线程主动调用wait()方法, 把自身挂起进入wait set中, 同时释放对象锁. 当发生下列任意情况, 线程会退出wait set:</p>
+<ul>
+<li><p>有其他线程调用notify方法唤醒线程.</p>
+</li>
+<li><p>有其他线程调用notify all方法唤醒线程.</p>
+</li>
+<li><p>有其他线程以interrupt方法唤醒线程, 当前线程捕捉到InterruptException.</p>
+</li>
+<li><p>wait方法到期(timeout).</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>由此可见, block态和wait态最大的区别在于前者是有JVM调度, 而后者是在代码中主动调用并调度的.</p>
+<p>值得注意的是:</p>
+<ol>
+<li><p>wait(), notify(), notifyAll()都是java.lang的Object类的方法, 而不是Thread类的方法. 因为这三个方法都是对于实例的wait set进行操作的, 而wait set是作用于所有Object的.</p>
+</li>
+<li><p>如果没有拿到对象锁的线程调用上面三种方法, 会触发IllegalMonitorStateException异常.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/07/14/Java/Java 05 - volatile/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Java 05 - volatile</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/12/Java/Java 03 - Thread与Runnable/">
+        <span class="next-text nav-default">Java 03 - Thread与Runnable</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

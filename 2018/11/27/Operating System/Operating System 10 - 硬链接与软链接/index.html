@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Operating System 10 - 硬链接与软链接">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/11/27/Operating System/Operating System 10 - 硬链接与软链接/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Operating System 10 - 硬链接与软链接 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Operating System 10 - 硬链接与软链接
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-27
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Operating-System/">Operating System</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#硬链接与软链接"><span class="toc-text">硬链接与软链接</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#硬链接"><span class="toc-text">硬链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#软链接"><span class="toc-text">软链接</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="硬链接与软链接"><a href="#硬链接与软链接" class="headerlink" title="硬链接与软链接"></a>硬链接与软链接</h1><a id="more"></a>
+
+<p>在Linux中文件被分为用户数据(user data)与元数据(metadata).</p>
+<p>用户数据, 即为文件数据块(data block), 是记录文件真实内容的地方.</p>
+<p>元数据是文件的附加属性, 如文件大小, 创建时间, 所有者等信息.</p>
+<p>在Linux中, 元数据中的inode号(inode是文件元数据的一部分但其不包括文件名, inode号即索引节点号)才是文件的唯一标识而非文件名. 文件名仅是为了方便人们的记忆和使用, 系统或程序通过indoe号寻找正确的文件数据块.</p>
+<p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543299774/linux/hard_link.jpg" alt="hard_link"></p>
+<p>为了解决文件的共享使用, Linux系统引入了两种链接: 硬链接(hard link)与软链接(又称符号链接, 即soft link或symbolic link). 链接为Linux系统解决了文件的共享使用, 还带来了隐藏文件路径, 增加权限安全及节省存储等好处.</p>
+<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>如果一个inode号对应了多个文件名, 则称这些文件为硬链接. 换言之, 硬链接就是同一个文件使用了多个别名.</p>
+<p>由于硬链接是有着相同inode号仅文件名不同的文件, 因此硬链接存在一下特性:</p>
+<ol>
+<li>文件有相同的inode以及data block.</li>
+<li>只能对已经存在的文件进行创建.</li>
+<li>不能交叉文件系统进行硬链接的创建.</li>
+<li>不能对目录进行创建, 只能对文件进行创建.</li>
+<li>删除一个硬链接文件并不影响其他有相同inode号的文件.</li>
+</ol>
+<h2 id="软链接"><a href="#软链接" class="headerlink" title="软链接"></a>软链接</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543299774/linux/soft_link.jpg" alt="soft_link"></p>
+<p>软链接与硬链接不同, 若文件用户数据块中存放的内容是另一个文件路径名的指向, 则该文件就是软链接. 软链接就是一个普通文件, 只是数据块内容有点特殊. 软链接有着自己的inode号以及用户数据块, 因此软链接的创建与使用没有类似硬链接的诸多限制:</p>
+<ol>
+<li>软链接有着自己的文件属性以及权限.</li>
+<li>可对不存在的文件或目录创建软链接.</li>
+<li>软链接可交叉文件系统.</li>
+<li>创建软链接时, 链接计数i_nlink不会增加.</li>
+<li>删除软链接并不影响被指向的文件, 但如果被指向的源文件被删除, 则相关软链接被称为死链接, 即dangling link, 若被指向路径文件被重新创建, 死链接可恢复为正常的软链接.</li>
+</ol>
+<p>事实上, 我们可以把硬链接看作是指向磁盘空间的一级指针, 而软链接则是指向指针的多级指针.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/12/03/High Availability/High Availability 01 - 高可用概念/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">High Availability 01 - 高可用概念</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/11/27/Message Queue/Message Queue 08 - RabbitMQ集群/">
+        <span class="next-text nav-default">Message Queue 08 - RabbitMQ集群</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

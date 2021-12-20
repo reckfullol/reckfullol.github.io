@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="CUDA 02 - 逻辑模型">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/02/28/CUDA/CUDA 02 - 逻辑模型/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> CUDA 02 - 逻辑模型 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          CUDA 02 - 逻辑模型
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-28
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CUDA/">CUDA</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#逻辑模型"><span class="toc-text">逻辑模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程层级结构"><span class="toc-text">线程层级结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#向量加法实例"><span class="toc-text">向量加法实例</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="逻辑模型"><a href="#逻辑模型" class="headerlink" title="逻辑模型"></a>逻辑模型</h1><a id="more"></a>
+
+<p>CUDA逻辑模型是异构模型, 需要CPU和GPU协同工作. 在CUDA中, host和device是两个重要概念, host是指CPU及其内存, device是指GPU及其内存. 典型的CUDA程序的执行流程如下:</p>
+<ol>
+<li>分配host, 并进行数据初始化</li>
+<li>分配device内存, 并从host将数据拷贝到device上.</li>
+<li>调用CUDA的和函数在device上完成指定的运算.</li>
+<li>将device上的运算结果拷贝到host上.</li>
+<li>释放device和host上分配的内存.</li>
+</ol>
+<p>kernel是在device上并行执行的函数, 在调用此类函数时, 将由N个不同的CUDA线程并行执行N次, 执行kernel的每个线程都会被分配一个唯一的线程ID, 可以通过threadIdx变量在内核中辨别线程.</p>
+<p>在CUDA程序中, 主程序在调用任何GPU内核之前, 必须对核进行配置, 以确定线程块数和每个线程块中的线程数以及共享内存大小.</p>
+<h2 id="线程层级结构"><a href="#线程层级结构" class="headerlink" title="线程层级结构"></a>线程层级结构</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1551341913/cuda/grid.png" alt="grid"></p>
+<p>一个kernel所启动的所有线程被称为一个grid, 同一个grid上的线程共享相同的全局内存空间. grid是线程结构的第一层次, grid又可以分为很多block, 一个block里包含很多thread, 这是第二个层次. grid和block都是定义为dim3类型的变量, dim3可以看成是包含三个无符号整数(x, y, z)成员的结构体变量, 在定义时缺省为1. 因此grid和block可以灵活的定义为1-dim, 2-dim以及3-dim结构.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 上图kernel结构定义</span></span><br><span class="line"></span><br><span class="line"><span class="function">dim3 <span class="title">grid</span><span class="params">(<span class="number">2</span>, <span class="number">3</span>)</span></span>;</span><br><span class="line"><span class="function">dim3 <span class="title">block</span><span class="params">(<span class="number">3</span>, <span class="number">4</span>)</span></span>;</span><br><span class="line">kernel_func&lt;&lt;&lt;grid, block&gt;&gt;&gt;(params);</span><br></pre></td></tr></table></figure>
+
+<p>由于CUDA是异构模型, 所以需要区分host和device上的代码, 在CUDA中通过函数修饰限定词来区分的: 主要三种限定词如下:</p>
+<ol>
+<li><p><code>__global__</code>: 在device上执行, 从host中调用, 返回类型必须是void, 不支持可变参数, 不能成为类成员函数. 注意使用<code>__global__</code>定义的kernel是异步的, 这意味着host不会等待kernel执行完就执行下一步. 其调用形式为: kernel_func&lt;&lt;&lt;Dg, Db, Ns, s&gt;&gt;&gt;(param list):</p>
+<ul>
+<li>Dg: 定义grid维度和尺寸.</li>
+<li>Db: 定义block维度和尺寸.</li>
+<li>Ns: 可选参数, 设置每个block除静态分配的Shared Memory外, 最多能动态分配的Shared Memory大小, 单位为byte. 缺省值为0.</li>
+<li>S: 可选参数, 表示该kernel处于哪个cuda stream中, 缺省值为0.</li>
+</ul>
+</li>
+<li><p><code>__device__</code>: 在device上执行, 仅可以从device中调用, 不可以和<code>__global__</code>同时用.</p>
+</li>
+<li><p><code>__host__</code>: 在host上执行, 仅可以从host上调用, 一般省略不写, 不可以和<code>__global__</code>同时用, 但可以和<code>__device__</code>同时用, 此时函数会在device和host上都编译.</p>
+</li>
+</ol>
+<h2 id="向量加法实例"><a href="#向量加法实例" class="headerlink" title="向量加法实例"></a>向量加法实例</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"cuda_runtime.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"device_launch_parameters.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">cudaError_t <span class="title">addWithCuda</span><span class="params">(<span class="keyword">int</span> *c, <span class="keyword">const</span> <span class="keyword">int</span> *a, <span class="keyword">const</span> <span class="keyword">int</span> *b, <span class="keyword">unsigned</span> <span class="keyword">int</span> size)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">__global__ <span class="keyword">void</span> <span class="title">addKernel</span><span class="params">(<span class="keyword">int</span> *c, <span class="keyword">const</span> <span class="keyword">int</span> *a, <span class="keyword">const</span> <span class="keyword">int</span> *b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = threadIdx.x;</span><br><span class="line">    c[i] = a[i] + b[i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> arraySize = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> a[arraySize] = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> &#125;;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> b[arraySize] = &#123; <span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span> &#125;;</span><br><span class="line">    <span class="keyword">int</span> c[arraySize] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add vectors in parallel.</span></span><br><span class="line">    cudaError_t cudaStatus = addWithCuda(c, a, b, arraySize);</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"addWithCuda failed!"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"&#123;1,2,3,4,5&#125; + &#123;10,20,30,40,50&#125; = &#123;%d,%d,%d,%d,%d&#125;\n"</span>,</span><br><span class="line">        c[<span class="number">0</span>], c[<span class="number">1</span>], c[<span class="number">2</span>], c[<span class="number">3</span>], c[<span class="number">4</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// cudaDeviceReset must be called before exiting in order for profiling and</span></span><br><span class="line">    <span class="comment">// tracing tools such as Nsight and Visual Profiler to show complete traces.</span></span><br><span class="line">    cudaStatus = cudaDeviceReset();</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaDeviceReset failed!"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Helper function for using CUDA to add vectors in parallel.</span></span><br><span class="line"><span class="function">cudaError_t <span class="title">addWithCuda</span><span class="params">(<span class="keyword">int</span> *c, <span class="keyword">const</span> <span class="keyword">int</span> *a, <span class="keyword">const</span> <span class="keyword">int</span> *b, <span class="keyword">unsigned</span> <span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> *dev_a = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> *dev_b = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> *dev_c = <span class="number">0</span>;</span><br><span class="line">    cudaError_t cudaStatus;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Choose which GPU to run on, change this on a multi-GPU system.</span></span><br><span class="line">    cudaStatus = cudaSetDevice(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Allocate GPU buffers for three vectors (two input, one output)    .</span></span><br><span class="line">    cudaStatus = cudaMalloc((<span class="keyword">void</span>**)&amp;dev_c, size * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaMalloc failed!"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cudaStatus = cudaMalloc((<span class="keyword">void</span>**)&amp;dev_a, size * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaMalloc failed!"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cudaStatus = cudaMalloc((<span class="keyword">void</span>**)&amp;dev_b, size * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaMalloc failed!"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Copy input vectors from host memory to GPU buffers.</span></span><br><span class="line">    cudaStatus = cudaMemcpy(dev_a, a, size * <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyHostToDevice);</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaMemcpy failed!"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cudaStatus = cudaMemcpy(dev_b, b, size * <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyHostToDevice);</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaMemcpy failed!"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Launch a kernel on the GPU with one thread for each element.</span></span><br><span class="line">    addKernel&lt;&lt;&lt;<span class="number">1</span>, size&gt;&gt;&gt;(dev_c, dev_a, dev_b);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check for any errors launching the kernel</span></span><br><span class="line">    cudaStatus = cudaGetLastError();</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"addKernel launch failed: %s\n"</span>, cudaGetErrorString(cudaStatus));</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// cudaDeviceSynchronize waits for the kernel to finish, and returns</span></span><br><span class="line">    <span class="comment">// any errors encountered during the launch.</span></span><br><span class="line">    cudaStatus = cudaDeviceSynchronize();</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaDeviceSynchronize returned error code %d after launching addKernel!\n"</span>, cudaStatus);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Copy output vector from GPU buffer to host memory.</span></span><br><span class="line">    cudaStatus = cudaMemcpy(c, dev_c, size * <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyDeviceToHost);</span><br><span class="line">    <span class="keyword">if</span> (cudaStatus != cudaSuccess) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"cudaMemcpy failed!"</span>);</span><br><span class="line">        <span class="keyword">goto</span> Error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">Error:</span><br><span class="line">    cudaFree(dev_c);</span><br><span class="line">    cudaFree(dev_a);</span><br><span class="line">    cudaFree(dev_b);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> cudaStatus;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/03/13/Message Queue/Message Queue 09 - RabbitMQ单机性能分析/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Message Queue 09 - RabbitMQ单机性能分析</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/02/28/CUDA/CUDA 01 - 硬件架构/">
+        <span class="next-text nav-default">CUDA 01 - 硬件架构</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

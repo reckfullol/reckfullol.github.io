@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Operating System 14 - 分支预测分析">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2021/05/17/Operating System/Operating System 14 - 分支预测分析/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Operating System 14 - 分支预测分析 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Operating System 14 - 分支预测分析
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2021-05-17
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Operating-System/">Operating System</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#分支预测分析"><span class="toc-text">分支预测分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景"><span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#指令流水线"><span class="toc-text">指令流水线</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#流水线-非流水线对比"><span class="toc-text">流水线/非流水线对比</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分支预测"><span class="toc-text">分支预测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#分支预测策略对比"><span class="toc-text">分支预测策略对比</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#有序数组-无序数组对比"><span class="toc-text">有序数组/无序数组对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IF-ELSE对比"><span class="toc-text">IF/ELSE对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分支执行概率对比"><span class="toc-text">分支执行概率对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#有无分支判断语句对比"><span class="toc-text">有无分支判断语句对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#builtin-expect对比"><span class="toc-text">__builtin_expect对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译器优化等级对比"><span class="toc-text">编译器优化等级对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BitHack对比"><span class="toc-text">BitHack对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-text">引用</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="分支预测分析"><a href="#分支预测分析" class="headerlink" title="分支预测分析"></a>分支预测分析</h1><a id="more"></a>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>业务中在高频调用代码段会出现条件判断语句, 因此联想cpu架构中的分支预测功能, 进行简要分析.</p>
+<h3 id="指令流水线"><a href="#指令流水线" class="headerlink" title="指令流水线"></a>指令流水线</h3><p>指令流水线通过将指令拆分为若干个连续, 独立的步骤来提升单位时间内同时执行的指令数(吞吐量).</p>
+<h4 id="流水线-非流水线对比"><a href="#流水线-非流水线对比" class="headerlink" title="流水线/非流水线对比"></a>流水线/非流水线对比</h4><ul>
+<li>流水线架构: 基于MIPS架构的CPU<strong>五级流水线</strong>, 在一个时钟周期最多可以同时处理五个独立步骤:<ul>
+<li>a: 读取指令(Instruction Fetch).</li>
+<li>b: 解码指令和读取寄存器(Instruction Decode and Register Fetch).</li>
+<li>c: 算术运算(Arithmetic Computation).</li>
+<li>d: 内存访问(Memory Read or Write).</li>
+<li>e: 回写寄存器(Register Write).</li>
+</ul>
+</li>
+<li>benchmark: 9条相同简单<strong>指令</strong>.</li>
+<li>测试结果[1]:<ul>
+<li>非流水线模式:<img src="https://i.loli.net/2021/05/17/q5rSsMhmFl9vbEx.png" alt="image.png"></li>
+<li>流水线模式:<img src="https://i.loli.net/2021/05/17/YK31dDcM2EejBVv.png" alt="image.png"></li>
+</ul>
+</li>
+<li>分析:<br>非流水线模式<strong>后继步骤需要等待前序步骤的完成</strong>, 模块大部分时间处于idle状态.<br>比较相同9个简单指令在不同模式完成时间, <strong>非流水线模式需要40个时钟周期(200ns), 流水线模式需要13个时钟周期(65ns)</strong>.<img src="https://i.loli.net/2021/05/17/eU4ZntQCX6sfiE2.png" alt="image.png"></li>
+</ul>
+<h3 id="分支预测"><a href="#分支预测" class="headerlink" title="分支预测"></a>分支预测</h3><p>流水线能够在同一个时钟周期处理多个步骤的充分条件是: <strong>每个步骤相互独立, 不存在依赖关系</strong>. 指令流水时, 处理器遇到分支指令, 不能在开始阶段就判断出分支结果, 即<strong>控制冒险(分支冒险)</strong>.<br>避免控制冒险的方法:<br>    1.  在分支指令后插入流水线冒泡, 直到分支指令的流水执行完毕.<img src="https://i.loli.net/2021/05/17/KqLEbDRBmlpdPe9.png" alt="image.png"><br>    2. 使用<strong>分支预测</strong>(在分支指令执行结束之前猜测哪一路分支将会被运行), 然后<strong>投机执行</strong>. 如果分支预测失败, 则要有能力<strong>恢复到分支指令执行完毕时刻的寄存器状态</strong>, 进入正确的分支继续执行.</p>
+<p>分支预测分为两个大类: <strong>静态预测</strong>和<strong>动态预测</strong>:<br>    1. 静态预测: 无论执行什么指令, 分支预测器总是执行相同的预测策略(无状态).<br>    2. 动态预测: 会根据执行指令的不同, 依据program counter(PC)的值以及历史信息等做出不同的预测(有状态).</p>
+<h4 id="分支预测策略对比"><a href="#分支预测策略对比" class="headerlink" title="分支预测策略对比"></a>分支预测策略对比</h4><ul>
+<li>分支预测策略:<ol>
+<li>静态预测:<ul>
+<li>Strategy 1: 预测所有分支都会跳转(Predict that all branches will be taken).</li>
+<li>Strategy 1a: 某些指令一律跳转, 其余指令一律不跳转, 例如判断大于等于操作一律跳转(Predict that all branches with certain operation codes will be taken; predict that the others will not be taken.).</li>
+<li>Strategy 3: 预测向低地址空间的分支跳转, 向高地址空间的分支不跳转. 地址指地址空间前后, 主要场景是每当到了一个循环的末尾判断是否继续循环时会预测向前跳转继续循环(Predict that all backward branches (toward lower addresses) will be taken; predict that all forward branches will not be take).</li>
+</ul>
+</li>
+<li>动态预测:<ul>
+<li>Strategy 2: 做出和上次是否跳转一样的预测, 默认跳转(Predict that a branch will be decided the same way as it was on its last execution. If it has not been previously executed, predict that it will be taken).</li>
+<li>Strategy 4: 维护没有分支跳转的表, 如果当前分支在表中, 预测不跳转, 反之预测跳转. 如果实际跳转, 则从表中移除该项, 该表遵循LRU(Maintain a table of the most recently used branch instructions that are not taken. If a branch instruction is in the table, predict that it will not be taken; otherwise predict that it will be taken. Purge table entries if they are taken, and use LRU replacement to add new entries).</li>
+<li>Strategy 5: 在cache中用bit表记录分支指令的跳转结果, 预测当前分支指令与一致, 默认跳转, bit表遵循LRU(Maintain a bit for each instruction in the cache. If an instruction is a branch instruction, the bit is used to record if it was taken on its last execution. Branches are predicted to be decided as on their last execution; if a branch has not been executed, it is predicted to be taken (implemented by initializing the bit cache to taken when an instruction is first placed in cache)).</li>
+<li>Strategy 6: 在RAM中用哈希表维护分支指令的跳转结果, 预测当前分支结果与上次一致(Hash the branch instruction address to m bits and use this index to address a random access memory containing the outcome of the most recent branch instruction indexing the same location. Predict that the branch outcome will be the same).</li>
+<li>Strategy 7: 基于Strategy 6将表项内容替换为2-bit状态机(saturated counter), 初始值为00, 每当分支跳转则加1, 反之减一, 根据首位预测当前分支跳转.<img src="https://i.loli.net/2021/05/17/ZIjTKWmuLENH4Ca.png" alt="image.png"></li>
+</ul>
+</li>
+</ol>
+</li>
+<li>benchmark:<ol>
+<li>ADVAN : 计算三个联立偏微分方程的解(Calculates the solution of three simultaneous partial differential equations).</li>
+<li>SCI2: 计算矩阵求逆(Performs matrix inversion).</li>
+<li>SINCOS: 将一系列点从极坐标转换为笛卡尔坐标(Converts a series of points from polar to Cartesian coordinates).</li>
+<li>SORTST: 对10,000个整数进行希尔排序(Sorts a list of 10,000 integers using the shell sort algorithm).</li>
+<li>GIBSON: 模拟GIBSON max算法(An artificial program that compiles to instructions that roughly satisfy the so called GIBSON mix).</li>
+<li>TBLLNK: 大量条件判断下进行链表操作(Processes a linked list and contains a variety of conditional branches).</li>
+</ol>
+</li>
+<li>测试结果[2]:<img src="https://i.loli.net/2021/05/17/OwGlZKTgQeHhYqn.png" alt="image.png"><br>  平均分支预测成功率86%, 最大分支预测成功率99.4%, 说明主流分支预测策略对于常见逻辑运算有不错表现.<img src="https://i.loli.net/2021/05/17/lFmkxyjY9hnuq7v.png" alt="image.png"></li>
+</ul>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><ul>
+<li>CPU: Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz(perf 2.6GHz).</li>
+<li>benchmark: 基于数组的条件遍历, 数组元素[0, 255], 通过分支执行条件<code>data[c] &gt; number</code>控制分支执行概率<a href="https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array" target="_blank" rel="noopener">benchmark</a>.<h3 id="有序数组-无序数组对比"><a href="#有序数组-无序数组对比" class="headerlink" title="有序数组/无序数组对比"></a>有序数组/无序数组对比</h3></li>
+<li>benchmark: 3.2e9有序/无序数组条件遍历求和, 分支执行概率<strong>50%</strong>.</li>
+<li>测试结果:<img src="https://i.loli.net/2021/05/17/gpZ78lP1VqOEywr.png" alt="image.png"></li>
+<li>分析:<ol>
+<li>有序数组分支预测成功率提高24.48%, <strong>接近100%</strong>. 说明<strong>分支预测成功率与逻辑局部性显著性相关</strong>, 测试CPU基于<strong>动态预测策略</strong>.</li>
+<li>任务耗时倒数比与IPC比, 分支处理速度比基本一致. 说明<strong>测试程序执行效率主要取决于分支处理速度, 根本上取决于流水线的并行程度</strong>. </li>
+<li>平均单次分支预测失败增加任务耗时(26.46 - 9.09) / (1608893451 - 441722)  = 1.07992e-08s = <strong>10.7992ns</strong>, 增加时钟周期1.07992e-08 / (1 / 2.6e9) = <strong>28个</strong>.</li>
+</ol>
+</li>
+</ul>
+<h3 id="IF-ELSE对比"><a href="#IF-ELSE对比" class="headerlink" title="IF/ELSE对比"></a>IF/ELSE对比</h3><ul>
+<li>benchmark: 3.2e9无序数组条件遍历求和<strong>逻辑分别运行在IF和ELSE分支</strong>, 分支执行概率80%.</li>
+<li>测试结果:<img src="https://i.loli.net/2021/05/17/KIjfnNTiZpxdPc7.png" alt="image.png"></li>
+<li>分析:<ol>
+<li>任务耗时, IPC和分支预测成功率近似相等, 说明<strong>逻辑放置IF或ELSE分支对性能无明显影响</strong>.</li>
+</ol>
+</li>
+</ul>
+<h3 id="分支执行概率对比"><a href="#分支执行概率对比" class="headerlink" title="分支执行概率对比"></a>分支执行概率对比</h3><ul>
+<li>benchmark: 3.2e9无序数组条件遍历求和, 分支执行概率<strong>{50%, 60 %, 70%, 80%, 90%, 100%}</strong>.</li>
+<li>测试结果:<img src="https://i.loli.net/2021/05/17/CkBpUNxPqaMw93h.png" alt="image.png"></li>
+<li>分析:<ol>
+<li>随着分支执行概率增加, 任务耗时线性减少; IPC, 分支处理速度和分支预测成功率线性增加.</li>
+<li>各项参数与分支执行概率进行<strong>相关性分析</strong>, 发现与分支执行概率<strong>显著性相关</strong>.<img src="https://i.loli.net/2021/05/17/DGQskV6KdE27R3C.png" alt="image.png"></li>
+</ol>
+</li>
+</ul>
+<h3 id="有无分支判断语句对比"><a href="#有无分支判断语句对比" class="headerlink" title="有无分支判断语句对比"></a>有无分支判断语句对比</h3><ul>
+<li><p>benchmark: 3.2e9无序数组条件遍历求和, 比较分支执行概率<strong>100%</strong>与无分支判断语句.</p>
+</li>
+<li><p>测试数据:<img src="https://i.loli.net/2021/05/17/OVLQvMAJpmuUqIw.png" alt="image.png"></p>
+</li>
+<li><p>分析:</p>
+<ol>
+<li><p>增加分支逻辑语句后, 指令数增加9831210237次. 分支逻辑调用次数增加3276800000次(数组元素个数), 做比得到9831210237 / 3276800000 = 3. <strong>猜想测试程序中单次分支逻辑相当于执行三次CPU指令</strong>. 我们比较C++文件差异和汇编文件差异:</p>
+<ol>
+<li><p>C++文件差异:</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">unsorted_with_if.cpp, unsorted_without_if.cpp</span><br><span class="line">&lt;             if (data[c] &gt;= 0)</span><br><span class="line">&lt;             &#123;</span><br><span class="line">&lt;                 sum += data[c];</span><br><span class="line">&lt;             &#125;</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt;             sum += data[c];</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>汇编文件差异:</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="addition">! .L7:</span></span><br><span class="line">&lt;   testl   %eax, %eax</span><br><span class="line">&lt;   js  .L6							; 实际逻辑不会执行分支跳转</span><br><span class="line">&lt;   movl	-24(%rbp), %eax</span><br><span class="line">&lt;	  movl	-131120(%rbp,%rax,4), %eax ; %eax = data[c]</span><br><span class="line">    cltq								; cltq = movslq %eax, %rax; %rax = data[c]</span><br><span class="line">    addq    %rax, -16(%rbp)			; sum += data[c]</span><br><span class="line"><span class="deletion">- .L6:</span></span><br><span class="line">    addl    $1, -24(%rbp)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>因为逻辑控制分支保证始终跳转, 因此实际增加的汇编指令调用为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">testl   %eax, %eax</span><br><span class="line">movl	-24(%rbp), %eax</span><br><span class="line">movl	-131120(%rbp,%rax,4), %eax</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p> <strong>实际分支逻辑添加导致汇编指令数量增加了3条, 与猜想一致</strong>(汇编指令集与CPU指令集基本对应).</p>
+</li>
+<li><p>删除分支逻辑语句后流水线并行程度下降, 但程序指令数减少, <strong>整体任务耗时降低</strong>.</p>
+</li>
+<li><p>平均单次分支逻辑语句增加任务耗时 (2.18 - 1.69) / 3276800000 = 1.49536e-10s = <strong>0.149536ns</strong>, 增加指令周期 1.49536e-10 / (1 / 2.6e9) = <strong>0.38个</strong>. 因为分支预测成功率为100%, 所以说明<strong>分支预测成功下平均单次分支逻辑语句的性能开销极低</strong>.<img src="https://i.loli.net/2021/05/17/WMUiEuXe8PgO6cz.png" alt="image.png"></p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="builtin-expect对比"><a href="#builtin-expect对比" class="headerlink" title="__builtin_expect对比"></a>__builtin_expect对比</h3><ul>
+<li><p>benchmark: 3.2e9无序数组条件遍历求和, 分别测试有无<a href="https://www.ibm.com/docs/en/zos/2.2.0?topic=performance-builtin-expect" target="_blank" rel="noopener">__builtin_expect</a>内置函数, 分支执行概率<strong>80%</strong>.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(__builtin_expect(!!(data[c] &gt; number), <span class="literal">true</span>))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试数据:<img src="https://i.loli.net/2021/05/17/BVPw35pi2M4QcNG.png" alt="image.png"></p>
+</li>
+<li><p>分析:</p>
+<ol>
+<li><p>任务耗时, IPC和分支预测成功率近似相等, 说明有无<code>__builtin_expect</code>内置函数对性能无明显影响.</p>
+</li>
+<li><p>查看插入__builtin_expect后汇编文件:</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">truemovl	-24(%rbp), %eax</span><br><span class="line">truemovl	-131120(%rbp,%rax,4), %eax</span><br><span class="line">truecmpl	$50, %eax</span><br><span class="line">&lt;	setg	%al; 			取出cmp结果</span><br><span class="line">&lt;	movzbl	%al, %eax; 		%eax = cmp结果</span><br><span class="line">&lt;	testq	%rax, %rax; 	cmp $0, %rax</span><br><span class="line">trueje	.L6</span><br><span class="line">truemovl	-24(%rbp), %eax</span><br><span class="line">truemovl	-131120(%rbp,%rax,4), %eax</span><br><span class="line">truecltq</span><br><span class="line">trueaddq	%rax, -16(%rbp)</span><br></pre></td></tr></table></figure>
+
+<p><code>__builtin_expect</code>并<strong>无实质逻辑优化</strong>.</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="编译器优化等级对比"><a href="#编译器优化等级对比" class="headerlink" title="编译器优化等级对比"></a>编译器优化等级对比</h3><ul>
+<li><p>benchmark: 3.2e9无序数组条件遍历求和, 分别测试不同编译器优化等级, 分支执行概率<strong>50%</strong>.</p>
+</li>
+<li><p>测试数据:<img src="https://i.loli.net/2021/05/17/2vLnq9jTzXkhHUp.png" alt="image.png"></p>
+</li>
+<li><p>分析:</p>
+<ol>
+<li><p>随着编译优化等级提高, 任务耗时减少; IPC, 分支处理速度和分支预测成功率提高.</p>
+</li>
+<li><p>任务耗时有两次明显下降:<img src="https://i.loli.net/2021/05/17/sdBc1OfiHjr4bUA.png" alt="image.png"></p>
+<ol>
+<li><p>O0 -&gt; O1: 任务耗时降低41%, 分支预测成功率无明显变化, 任务耗时反比为1 / (15.58 / 26.46) = 1.69833, 分支处理速度比为 420.85 / 248.17 = 1.69581. 说明<strong>O1阶段编译器主要优化分支处理速度</strong>.<img src="https://i.loli.net/2021/05/17/bgh7Dx69BT2GXkf.png" alt="image.png"></p>
+</li>
+<li><p>O2 -&gt; O3: 任务耗时降低75%, 分支预测成功率提高24.5%至99.99%.<img src="https://i.loli.net/2021/05/17/MxIAR8rtEKqQkSV.png" alt="image.png"><br>O3汇编代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.L7:</span><br><span class="line">    movl    (%rdx), %ecx</span><br><span class="line">    movslq  %ecx, %rsi ; %rsi = data[c]</span><br><span class="line">    addq    %rbx, %rsi ; %rsi += sum</span><br><span class="line">    cmpl    $127, %ecx ; 127 - data[c]</span><br><span class="line">    cmovg   %rsi, %rbx ; sum = %rsi</span><br><span class="line">; 指令重排, 占用%rsi寄存器临时存储结果; cmovg条件赋值%rsi给sum(做差结果存储在RFLAGS寄存器)</span><br></pre></td></tr></table></figure>
+
+<p>分析发现:</p>
+<ol>
+<li>通过<strong>指令重排</strong>预先计算分支内结果, 暂存在寄存器中.</li>
+<li>使用<strong>CMOVG</strong>汇编指令, 根据RFLAGS标志条件执行, 规避因跳转而可能引起的分支预测陷阱, 使其分支预测成功率接近100%.<img src="https://i.loli.net/2021/05/17/pi69hWLUdbHSslP.png" alt="image.png"></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="BitHack对比"><a href="#BitHack对比" class="headerlink" title="BitHack对比"></a>BitHack对比</h3><ul>
+<li><p>benchmark: 3.2e9无序数组条件遍历求和, 分别测试条件分支语句与<a href="http://graphics.stanford.edu/~seander/bithacks.html" target="_blank" rel="noopener">BitHack</a>实现, 分支执行概率<strong>50%</strong>:<br>  BitHack C++:</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt; int t = (data[c] - 128) &gt;&gt; 31;</span><br><span class="line">&lt; sum += ~t &amp; data[c];</span><br><span class="line">&gt; if (data[c] &gt;= 128)</span><br><span class="line">&gt;    sum += data[c];</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>条件判断结果做差方式存储在标志位t中, ~t &amp;的方式条件操作</strong>:</p>
+<ul>
+<li>data[c] &gt;= 128: t = 0, ~0 &amp; n = n.</li>
+<li>data[c] &lt; 128: t = -1; ~-1 &amp; n = 0.</li>
+</ul>
+</li>
+<li><p>测试数据:<img src="https://i.loli.net/2021/05/17/U72ejFLk9nEmxco.png" alt="image.png"></p>
+</li>
+<li><p>分析:</p>
+<ol>
+<li>BitHack与有序数组O3优化, 无序数组O3优化性能开销基本相同.<img src="https://i.loli.net/2021/05/17/RiHWtNB8AbEVuUs.png" alt="image.png"></li>
+</ol>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>现代分支预测器在通用场景下的分支预测成功率平均值在70%以上, 逻辑局部性越明显, 分支预测成功率越高.</li>
+<li>逻辑放置在IF逻辑分支还是ELSE逻辑分支对性能无明显影响.</li>
+<li><code>__builtin_expect</code>内置函数对分支预测成功率无明显影响.</li>
+<li>不同分支预测结果对分支逻辑执行效率的影响: <ol>
+<li>分支预测成功: 平均任务耗时0.149536ns, 指令周期0.38个. </li>
+<li>分支预测失败: 平均任务耗时10.7992ns, 指令周期28个.</li>
+<li>分支预测失败开销是分支预测成功的72倍.<img src="https://i.loli.net/2021/05/17/zjfdEOe1siBr2bp.png" alt="image.png"></li>
+</ol>
+</li>
+<li>提高分支预测准确率的优化方法:<ol>
+<li>增强逻辑局部性, 增大数据倾斜程度.</li>
+<li>使用<code>-O3</code>编译优化等级或开启<code>-ftree-vectorize</code>编译优化选项, 生成条件移动汇编指令.</li>
+<li>逻辑代码中模拟<strong>CMOV</strong>, 避免显式分支逻辑语句出现.</li>
+</ol>
+</li>
+</ol>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><ul>
+<li>[1] Filsinger, M. D. (2005). Understanding CPU Pipelining Through Simulation Programming. <em>age</em>, <em>10</em>, 1.</li>
+<li>[2] Smith, J. E. (1998, August). A study of branch prediction strategies. In <em>25 years of the international symposia on Computer architecture (selected papers)</em> (pp. 202-215).</li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2021/06/10/ACMSGURU/ACMSGURU 127 - Telephone directory/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">ACMSGURU 127 - Telephone directory</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2021/02/20/Unreal/Unreal 01 - LoadMap/">
+        <span class="next-text nav-default">Unreal 01 - LoadMap</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Message Queue 08 - RabbitMQ集群">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/11/27/Message Queue/Message Queue 08 - RabbitMQ集群/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Message Queue 08 - RabbitMQ集群 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Message Queue 08 - RabbitMQ集群
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-27
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Message-Queue/">Message Queue</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RabbitMQ集群"><span class="toc-text">RabbitMQ集群</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#设计集群的目的"><span class="toc-text">设计集群的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集群配置方式"><span class="toc-text">集群配置方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#节点类型"><span class="toc-text">节点类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Erlang-Cookie"><span class="toc-text">Erlang Cookie</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#镜像队列"><span class="toc-text">镜像队列</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="RabbitMQ集群"><a href="#RabbitMQ集群" class="headerlink" title="RabbitMQ集群"></a>RabbitMQ集群</h1><a id="more"></a>
+
+<h2 id="设计集群的目的"><a href="#设计集群的目的" class="headerlink" title="设计集群的目的"></a>设计集群的目的</h2><ol>
+<li>允许消费者和生产者在RabbitMQ节点崩溃的情况下继续运行.</li>
+<li>通过增加更多的节点来扩展通信消息的吞吐量.</li>
+</ol>
+<h2 id="集群配置方式"><a href="#集群配置方式" class="headerlink" title="集群配置方式"></a>集群配置方式</h2><ol>
+<li><p>cluster:</p>
+<ul>
+<li>不支持跨网段, 用于同一个网段内的局域网.</li>
+<li>可以动态增加或减少.</li>
+<li>节点间需要运行相同版本的RabbitMQ和Erlang.</li>
+</ul>
+</li>
+<li><p>federation:</p>
+<p> 应用于广域网, 允许单台服务器上的exchange或queue接受发布到另一个服务器上exchange或queue的队列, 可以是单独机器或集群. federation队列类似于单向点对点连接, 消息会在联盟队列之间转发任意次, 知道被消费者接受. 通常用federaion来连接internet上的中间服务器, 用来当作订阅分发消息或工作队列.</p>
+</li>
+<li><p>shovel:</p>
+<p> 连接方式与federation的连接方式类似, 但他的工作在更低层次, 可以应用于广域网.</p>
+</li>
+</ol>
+<h2 id="节点类型"><a href="#节点类型" class="headerlink" title="节点类型"></a>节点类型</h2><ul>
+<li><p>RAM node:</p>
+<p>  内存节点将所有的queue, exchange, binding, 用户, 权限和vhost元数据存储在内存中, 好处是是可以使得像queue, exchange声明等操作更加的快速.</p>
+</li>
+<li><p>Disk node:</p>
+<p>  将元数据存储在磁盘中, 单节点系统中只允许磁盘类型的节点, 防止重启RabbitMQ的时候, 丢失系统的配置信息.</p>
+</li>
+</ul>
+<blockquote>
+<p>问题说明: RabbitMQ要求在集群中至少有一个磁盘节点, 其他所有节点可以是内存节点, 当节点加入或者离开集群时, 必须要将该变更通知到至少一个磁盘节点. 如果集群中唯一的一个磁盘节点崩溃的话, 集群仍然可以保持运行, 但是无法进行其他操作(增删改查), 直到节点回复.</p>
+</blockquote>
+<blockquote>
+<p>解决方案: 设置两个磁盘节点, 至少有一个是可用的, 可以保存元数据的更改.</p>
+</blockquote>
+<h2 id="Erlang-Cookie"><a href="#Erlang-Cookie" class="headerlink" title="Erlang Cookie"></a>Erlang Cookie</h2><p>Erlang Cookie是保证不同节点可以互相通信的密钥, 要保证集群中的不同节点相互通信必须共享相同的Erlang Cookie, 具体的目录存放在<code>/var/lib/rabbitmq/.erlang.cookie</code>.</p>
+<blockquote>
+<p>说明: 这就要从rabbitmqctl命令的工作原理说起, RabbitMQ底层是通过Erlang架构来实现的, 所以rabbitmqctl会启动Erlang节点, 并基于Erlang节点来使用Erlang系统连接RabbitMQ节点, 在连接过程中需要正确的Erlang Cookie和节点名称, Erlang节点通过交换Erlang Cookie来获得认证.</p>
+</blockquote>
+<h2 id="镜像队列"><a href="#镜像队列" class="headerlink" title="镜像队列"></a>镜像队列</h2><p>RabbitMQ的Cluster集群一般分为两种, 普通模式和镜像模式.</p>
+<ul>
+<li><p>普通模式:</p>
+<p>  默认的集群模式, 以两个节点（rabbit01、rabbit02）为例来进行说明. 对于Queue来说, 消息实体只存在于其中一个节点rabbit01（或者rabbit02）, rabbit01和rabbit02两个节点仅有相同的元数据, 即队列的结构. 当消息进入rabbit01节点的Queue后, consumer从rabbit02节点消费时, RabbitMQ会临时在rabbit01、rabbit02间进行消息传输, 把A中的消息实体取出并经过B发送给consumer. 所以consumer应尽量连接每一个节点, 从中取消息. 即对于同一个逻辑队列, 要在多个节点建立物理Queue. 否则无论consumer连rabbit01或rabbit02, 出口总在rabbit01, 会产生瓶颈. 当rabbit01节点故障后, rabbit02节点无法取到rabbit01节点中还未消费的消息实体. 如果做了消息持久化, 那么得等rabbit01节点恢复, 然后才可被消费；如果没有持久化的话, 就会产生消息丢失的现象.</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543288962/mq/amqp_queue_1.png" alt="amqp_queue_1"></p>
+<p>  下面表示在集群配置下的不同节点创建队列的情况</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543288962/mq/amqp_queue_2.png" alt="amqp_queue_2"></p>
+<p>  下图表示在集群配置下的不同节点创建交换器和队列的绑定的情况</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543288962/mq/amqp_queue_3.png" alt="amqp_queue_3"></p>
+</li>
+<li><p>镜像模式:</p>
+<p>  将需要消费的队列变成镜像队列, 存在于多个节点, 这样就可以实现RabbitMQ的HA高可用性. 作用就是消息实体会主动在镜像节点之间实现同步, 而不是像普通模式那样, 在消费者消费数据时临时读取. 缺点是集群内部通讯会占用大量的带宽.</p>
+<p>  <img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1543288962/mq/amqp_queue_4.png" alt="amqp_queue_4"></p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/11/27/Operating System/Operating System 10 - 硬链接与软链接/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Operating System 10 - 硬链接与软链接</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/11/27/Message Queue/Message Queue 07 - RabbitMQ持久化/">
+        <span class="next-text nav-default">Message Queue 07 - RabbitMQ持久化</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

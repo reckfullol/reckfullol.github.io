@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Go 01 - Goroutine">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/09/17/Go/Go 01 - Goroutine/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Go 01 - Goroutine - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Go 01 - Goroutine
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-17
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Go/">Go</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Goroutine"><span class="toc-text">Goroutine</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#并发与并行"><span class="toc-text">并发与并行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#并发"><span class="toc-text">并发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#并行"><span class="toc-text">并行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关系"><span class="toc-text">关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程模型"><span class="toc-text">线程模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么需要Go-Scheduler"><span class="toc-text">为什么需要Go Scheduler</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go-Scheduler"><span class="toc-text">Go Scheduler</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#G"><span class="toc-text">G</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#M"><span class="toc-text">M</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#P"><span class="toc-text">P</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调度"><span class="toc-text">调度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#系统调用"><span class="toc-text">系统调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#窃取工作"><span class="toc-text">窃取工作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能测试"><span class="toc-text">性能测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#耗时"><span class="toc-text">耗时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存"><span class="toc-text">内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试代码"><span class="toc-text">测试代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h1><a id="more"></a>
+
+<h2 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h2><h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>并发是指程序的逻辑结构. 非并发程序只有一个逻辑控制流的顺序执行程序, 在任何时刻, 程序只会处于在这个逻辑流的某个位置. 如果一个程序有多个独立的逻辑控制流, 那么就说这个程序是并发的. 也就是说, 如果把逻辑控制流绘制为时序流程图, 那么允许出现重叠的区间.</p>
+<p>并发可以通过以下方式做到:</p>
+<ol>
+<li>显式定义并触发多个逻辑控制流, 由应用程序或操作系统对其进行调度. 他们之间可以是独立无关, 也可以是相互依赖.</li>
+<li>隐式放置多个逻辑控制流, 由事件触发时调用, 也就是事件驱动.</li>
+</ol>
+<h3 id="并行"><a href="#并行" class="headerlink" title="并行"></a>并行</h3><p>并行是指程序的运行状态. 如果一个程序在某一时刻可以被多个CPU流水线同时处理, 那么我们就说这个程序是以并行的方式运行. 显然并行是需要硬件支持.</p>
+<p>并行可以通过以下方式做到:</p>
+<ol>
+<li>多台物理机器, 如cluster进行MapReduce.</li>
+<li>多CPU流水线, 多个CPU或者多核或者超线程.</li>
+<li>单CPU中的Instruction-level parallelism, 指令级并行. 通过分支预测和乱序执行, 可以令CPU在单个时钟周期内执行多条指令.</li>
+<li>Single instruction, multiple data, SIMD指令集支持单条指令对多条数据进行操作.</li>
+</ol>
+<h3 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h3><ol>
+<li>并发是并行的必要不充分条件, 如果一个程序本身就不是并发的, 那么不可能被并行化处理. 一个并发程序如果只能被一个CPU流水线用分时方式处理, 那么就不是并行的.</li>
+<li>并发只是更符合现实问题本质的表达方法, 并发的最初目的是简化代码逻辑, 而不是使程序运行的更快.</li>
+</ol>
+<p><img src="https://i.loli.net/2019/10/07/9gfXEUk7oRqlOZy.png" alt></p>
+<h2 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h2><p><img src="https://i.loli.net/2019/10/08/ujNvGbRpEIMrnUk.png" alt></p>
+<p>一般意义上的线程模型根据用户态和内核态之间的对应关系一般分为三类:</p>
+<ol>
+<li><p>N:1 :</p>
+<p>所有用户态线程对应到一个内核态线程, 这样上下文切换成本最低, 但是无法利用多核资源.</p>
+</li>
+<li><p>1:1 :</p>
+<p> 一个用户态线程对应到一个内核态线程, 能够利用多核资源, 但是上下文切换成本较高.</p>
+</li>
+<li><p>M:N :</p>
+<p> 若干个用户态线程绑定到不同到内核态线程, 既能够利用多核资源, 也能够降低上下文切换时间, 但是调度算法但实现成本偏高.</p>
+</li>
+</ol>
+<h2 id="为什么需要Go-Scheduler"><a href="#为什么需要Go-Scheduler" class="headerlink" title="为什么需要Go Scheduler"></a>为什么需要Go Scheduler</h2><p><img src="https://i.loli.net/2019/10/08/HPV6QBma9okzr34.png" alt></p>
+<ol>
+<li>避免线程创建开销: 对于内核态线程而言, 很多特性是操作系统给予的. 但对于Go程序很多是不必要的, 如果每次创建协程都创建一个内核态线程与之对应, 为了没有必要的特性而牺牲性能是不经济的.</li>
+<li>减少Go垃圾回收的复杂度: 根据Go的垃圾回收器机制, 需要在垃圾回收时暂停所有线程, 才能使得内存到达稳定一致的状态, 对于1:1的方案令所有内核态线程暂停开销过大.</li>
+</ol>
+<h2 id="Go-Scheduler"><a href="#Go-Scheduler" class="headerlink" title="Go Scheduler"></a>Go Scheduler</h2><p><img src="https://i.loli.net/2019/10/08/8cPnryGCqYBdQl7.png" alt></p>
+<p>Go Scheduler是参考CSP(Communicating Sequential Process)模型, 使用Goroutine并行执行任务, 并将Channel作为Goroutine之间的通信方式. 虽然使用互斥锁和共享内存也可以在Go中完成Goroutine之间的通信, 但是使用Channel更为推荐.</p>
+<blockquote>
+<p>Don’t communicate by sharing memory, share memory by communicating.</p>
+</blockquote>
+<p>Go Scheduler采用M:N两级线程模型, 即GMP模型.</p>
+<ol>
+<li>M: 表示操作系统中的线程, 他是可以被操作系统管理的线程, 和POSIX中的标准线程非常类似.</li>
+<li>G: 表示Goroutine, 每个Goroutine都包含堆栈, 指令指针和其他用于调度的信息.</li>
+<li>P: 表示调度的上下文, 可以被看作一个运行线程M上的本地调度器.</li>
+</ol>
+<h3 id="G"><a href="#G" class="headerlink" title="G"></a>G</h3><p>Go语言中并发的执行单元就是Goroutine, 类似于操作系统中的线程, 但是占用了更小的内存空间, 同时降低了Goroutine切换的开销.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> g <span class="keyword">struct</span> &#123;</span><br><span class="line">    m              *m               <span class="comment">// current m; offset known to arm liblink</span></span><br><span class="line">    sched          gobuf</span><br><span class="line">    syscallsp      <span class="keyword">uintptr</span>          <span class="comment">// if status==Gsyscall, syscallsp = sched.sp to use during gc</span></span><br><span class="line">    syscallpc      <span class="keyword">uintptr</span>          <span class="comment">// if status==Gsyscall, syscallpc = sched.pc to use during gc</span></span><br><span class="line">    param          unsafe.Pointer   <span class="comment">// passed parameter on wakeup</span></span><br><span class="line">    atomicstatus   <span class="keyword">uint32</span></span><br><span class="line">    goid           <span class="keyword">int64</span></span><br><span class="line">    schedlink      guintptr</span><br><span class="line">    waitsince      <span class="keyword">int64</span>            <span class="comment">// approx time when the g become blocked</span></span><br><span class="line">    waitreason     waitReason       <span class="comment">// if status==Gwaiting</span></span><br><span class="line">    preempt        <span class="keyword">bool</span>             <span class="comment">// preemption signal, duplicates stackguard0 = stackpreempt</span></span><br><span class="line">    lockedm        muintptr</span><br><span class="line">    writebuf       []<span class="keyword">byte</span></span><br><span class="line">    sigcode0       <span class="keyword">uintptr</span></span><br><span class="line">    sigcode1       <span class="keyword">uintptr</span></span><br><span class="line">    sigpc          <span class="keyword">uintptr</span></span><br><span class="line">    gopc           <span class="keyword">uintptr</span>          <span class="comment">// pc of go statement that created this goroutine</span></span><br><span class="line">    startpc        <span class="keyword">uintptr</span>          <span class="comment">// pc of goroutine function</span></span><br><span class="line">    waiting        *sudog           <span class="comment">// sudog structures this g is waiting on (that have a valid elem ptr); in lock order</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结构体g的字段atomicsatatus就存储了Goroutine的状态:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>_Gidle</td>
+<td>刚刚被分配并且还没有被初始化</td>
+</tr>
+<tr>
+<td>_Grunnable</td>
+<td>没有执行代码, 没有栈的所有权, 存储在运行队列中</td>
+</tr>
+<tr>
+<td>_Grunning</td>
+<td>可以执行代码, 拥有栈的所有权, 被赋予了内核线程 M 和处理器 P</td>
+</tr>
+<tr>
+<td>_Gsyscall</td>
+<td>正在执行系统调用, 拥有栈的所有权, 没有执行用户代码, 被赋予了内核线程 M 但是不在运行队列上</td>
+</tr>
+<tr>
+<td>_Gwaiting</td>
+<td>由于运行时而被阻塞, 没有执行用户代码并且不在运行队列上, 但是可能存在于 Channel 的等待队列上</td>
+</tr>
+<tr>
+<td>_Gdead</td>
+<td>没有被使用, 没有执行代码, 可能有分配的栈</td>
+</tr>
+<tr>
+<td>_Gcopystack</td>
+<td>栈正在被拷贝, 没有执行代码, 不在运行队列上</td>
+</tr>
+</tbody></table>
+<p>最终我们可以将Goroutine的运行期总结为三种状态:</p>
+<ol>
+<li>等待中: 表示当前Goroutine等待某些条件满足后才会继续执行, 比如当前Goroutine正在执行系统调用或者同步操作.</li>
+<li>可运行: 表示当前Goroutine在等待某个M执行其指令, 如果当前程序中有非常多都Goroutine, 每个Goroutine就可能会等待更多都时间.</li>
+<li>运行中: 表示当前Goroutine正在某个M上执行指令.</li>
+</ol>
+<h3 id="M"><a href="#M" class="headerlink" title="M"></a>M</h3><p>Go并发模型中M其实表示的是操作系统线程, 默认情况下调度器最多能创建10000个线程, 但是其中绝大多数线程都不会执行用户代码, 最多只有GOMAXPROCS个线程M能够正常运行.</p>
+<p>在默认情况下, 一个四核机器会创建四个操作系统线程, 每个线程其实都是一个m结构体, 我们也可以通过runtime.GOMAXPROCS改变最大可运行线程的个数.</p>
+<p>在大多数情况下, 我们都会使用Go的默认配置, 也就是#thread = #CPU, 在这种情况下不会触发操作系统级别的线程调度和上下文切换, 所有的调度都会发生在用户态, 由Go语言调度器触发, 能够减少非常多的额外开销.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> m <span class="keyword">struct</span> &#123;</span><br><span class="line">    g0      *g     <span class="comment">// goroutine with scheduling stack</span></span><br><span class="line">    curg    *g     <span class="comment">// current running goroutine</span></span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>g0是持有调度堆栈的Goroutine, curg是当前线程上运行的Goroutine, 这也是作为操作系统唯二关心的Goroutine了.</p>
+<h3 id="P"><a href="#P" class="headerlink" title="P"></a>P</h3><p>P是线程需要的上下文环境, 也是用于处理代码逻辑的处理器, 通过处理器的调度, 每个内核线程M都能够执行多个G, 这样就能在G进行一些IO操作的时候及时对他们进行切换, 提高CPU的利用率.</p>
+<p>每个Go程序中之所以处理器的数量一定会等于GOMAXPROCS, 是因为调度器在启动时就会创建GOMAXPROCS个处理器P, 这些处理器会绑定到不同的线程M上并为他们调度Goroutine.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> p <span class="keyword">struct</span> &#123;</span><br><span class="line">    id          <span class="keyword">int32</span></span><br><span class="line">    status      <span class="keyword">uint32</span>     <span class="comment">// one of pidle/prunning/...</span></span><br><span class="line">    link        puintptr</span><br><span class="line">    schedtick   <span class="keyword">uint32</span>     <span class="comment">// incremented on every scheduler call</span></span><br><span class="line">    syscalltick <span class="keyword">uint32</span>     <span class="comment">// incremented on every system call</span></span><br><span class="line">    sysmontick  sysmontick <span class="comment">// last tick observed by sysmon</span></span><br><span class="line">    m           muintptr   <span class="comment">// back-link to associated m (nil if idle)</span></span><br><span class="line">    mcache      *mcache</span><br><span class="line"></span><br><span class="line">    runqhead <span class="keyword">uint32</span></span><br><span class="line">    runqtail <span class="keyword">uint32</span></span><br><span class="line">    runq     [<span class="number">256</span>]guintptr</span><br><span class="line">    runnext guintptr</span><br><span class="line"></span><br><span class="line">    sudogcache []*sudog</span><br><span class="line">    sudogbuf   [<span class="number">128</span>]*sudog</span><br><span class="line"></span><br><span class="line">    ...v</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>p结构体中的状态status会是以下五种状态之一:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>_Pidle</td>
+<td>处理器没有运行用户代码或者调度器, 被空闲队列或者改变其状态的结构持有, 运行队列为空</td>
+</tr>
+<tr>
+<td>_Prunning</td>
+<td>被线程 M 持有, 并且正在执行用户代码或者调度器</td>
+</tr>
+<tr>
+<td>_Psyscall</td>
+<td>没有执行用户代码, 当前线程陷入系统调用</td>
+</tr>
+<tr>
+<td>_Pgcstop</td>
+<td>被线程 M 持有, 当前处理器由于垃圾回收被停止</td>
+</tr>
+<tr>
+<td>_Pdead</td>
+<td>当前处理器已经不被使用</td>
+</tr>
+</tbody></table>
+<h3 id="调度"><a href="#调度" class="headerlink" title="调度"></a>调度</h3><p><img src="https://i.loli.net/2019/10/08/6Kba4hOecZ9JAHq.png" alt></p>
+<p>如图所示, 我们现在有两个线程(M), 每个都持有一个上下文环境(P), 同时运行着一个协程(G). 为了执行若干协程指令, 每个线程必须持有一个上下文环境.</p>
+<p>灰色的协程表示状态为等待中, 即没有执行代码, 没有栈的所有权, 等待在运行队列中. 当Go程序中执行到go表达式时, 协程会被添加到运行队列的队尾. 当上下文环境到达调度点, 会从运行队列队首弹出一个协程, 为其设置堆栈, 指令指针, 开始执行其指令.</p>
+<p>为了减少加锁竞态, 每个上下文环境都有一个自己的运行队列. 在早期, Go scheduler共享一个全局运行队列. 线程需要频繁加锁去获取等待执行的协程. 因此当拥有多核的机器时, 当时的goroutine的性能并不理想.</p>
+<h4 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h4><p><img src="https://i.loli.net/2019/10/08/tV1oRPTLzjm38Hk.png" alt></p>
+<p>为什么我们不舍弃上下文(P), 将运行队列直接挂载到线程. 原因在于当执行线程囿于一些原因阻塞时, 我们可以通过保有上下文环境携带运行队列挂载到其他线程下.</p>
+<p>一种阻塞的原因是当我们调用系统调用, 因为线程无法同时既执行指令又被系统调用阻塞, 我们需要卸载上下文环境, 令其可以继续保持调度状态.</p>
+<p>Go scheduler保证环境中存在足够的线程运行所有的上下文环境. 以上图举例, M1是一个或新创建或从线程池取出的一个线程. 这个系统调用的线程M0会继续持有协程G0完成系统调用.</p>
+<p>当系统调用结束, 线程M0会尝试获得上下文环境来运行协程. 通常他会从其他线程中窃取一个上下文环境, 如果窃取失败, 线程会将这个协程G0放到全局的运行队列, 并把自己放回线程池, 切换到休眠状态.</p>
+<p>上下文环境发现本地运行队列为空时, 会从这个全局队列中拉取协程. 上下文环境同时也会周期性的检查全局运行队列, 避免有协程出现饿死的情况.</p>
+<p>需要注意的是, 如果协程调用网络I/O, 会从线程中脱离出来并放入运行时集成的网络poller中, 当poller表示网络的读写操作完成后, 这个协程会回到上下文环境并完成后续工作.</p>
+<h4 id="窃取工作"><a href="#窃取工作" class="headerlink" title="窃取工作"></a>窃取工作</h4><p><img src="https://i.loli.net/2019/10/08/9IpLPGicUqla14s.png" alt></p>
+<p>某个上下文环境执行完了本地运行队列的所有协程后, 会导致若干本地运行队列的不平衡. 因此该上下文环境会首先从全局运行队列中获取协程, 如果没有则会尝试从其他上下文环境中拿走一半的协程. </p>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><h3 id="耗时"><a href="#耗时" class="headerlink" title="耗时"></a>耗时</h3><p><img src="https://i.loli.net/2019/10/10/Y6wKgISUPfcTMvb.png" alt></p>
+<p>横轴: 协程数量级.<br>纵轴: 耗时(ns/op).<br>红线: 创建单个协程所需要的时间.<br>绿色: 切换单个协程所需要的时间.</p>
+<p>由上图可以看出, 在1e3到1e5的规模下, 协程的创建和切换时间开销都较为稳定:</p>
+<p>创建单个协程: ~1500ns/op.<br>切换单个协程: ~500ns/op.</p>
+<h3 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h3><p><img src="https://i.loli.net/2019/10/10/deElJitANacz87S.png" alt></p>
+<p>由上图可以看出, 在1e5到1e6到区间, 单个协程的内存占用都在2500B左右.</p>
+<h3 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// memory usage</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"flag"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">    <span class="string">"runtime"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> n = flag.Int(<span class="string">"n"</span>, <span class="number">1e5</span>, <span class="string">"Number of goroutines to create"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ch = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">byte</span>)</span><br><span class="line"><span class="keyword">var</span> counter = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    counter++</span><br><span class="line">    &lt;-ch <span class="comment">// Block this goroutine</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    flag.Parse()</span><br><span class="line">    <span class="keyword">if</span> *n &lt;= <span class="number">0</span> &#123;</span><br><span class="line">        fmt.Fprintf(os.Stderr, <span class="string">"invalid number of goroutines"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Limit the number of spare OS threads to just 1</span></span><br><span class="line">    runtime.GOMAXPROCS(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make a copy of MemStats</span></span><br><span class="line">    <span class="keyword">var</span> m0 runtime.MemStats</span><br><span class="line">    runtime.ReadMemStats(&amp;m0)</span><br><span class="line"></span><br><span class="line">    t0 := time.Now().UnixNano()</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; *n; i++ &#123;</span><br><span class="line">        <span class="keyword">go</span> f()</span><br><span class="line">    &#125;</span><br><span class="line">    runtime.Gosched()</span><br><span class="line">    t1 := time.Now().UnixNano()</span><br><span class="line">    runtime.GC()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make a copy of MemStats</span></span><br><span class="line">    <span class="keyword">var</span> m1 runtime.MemStats</span><br><span class="line">    runtime.ReadMemStats(&amp;m1)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> counter != *n &#123;</span><br><span class="line">        fmt.Fprintf(os.Stderr, <span class="string">"failed to begin execution of all goroutines"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fmt.Printf(<span class="string">"Number of goroutines: %d\n"</span>, *n)</span><br><span class="line">    fmt.Printf(<span class="string">"Per goroutine:\n"</span>)</span><br><span class="line">    fmt.Printf(<span class="string">"  Memory: %.2f bytes\n"</span>, <span class="keyword">float64</span>(m1.Sys-m0.Sys)/<span class="keyword">float64</span>(*n))</span><br><span class="line">    fmt.Printf(<span class="string">"  Time:   %f µs\n"</span>, <span class="keyword">float64</span>(t1-t0)/<span class="keyword">float64</span>(*n)/<span class="number">1e3</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// time consume</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">runCallback</span><span class="params">(in, out <span class="keyword">chan</span> <span class="keyword">int64</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> n, ok := &lt;-in; ok; n, ok = &lt;-in &#123;</span><br><span class="line">        out &lt;- n</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">runTest</span><span class="params">(round <span class="keyword">int</span>, coroutineNum, switchTimes <span class="keyword">int64</span>)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"##### Round: %v\n"</span>, round)</span><br><span class="line"></span><br><span class="line">    start := time.Now()</span><br><span class="line">    channelsIn, channelsOut := <span class="built_in">make</span>([]<span class="keyword">chan</span> <span class="keyword">int64</span>, coroutineNum), <span class="built_in">make</span>([]<span class="keyword">chan</span> <span class="keyword">int64</span>, coroutineNum)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">int64</span>(<span class="number">0</span>); i &lt; coroutineNum; i++ &#123;</span><br><span class="line">        channelsIn[i] = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int64</span>, <span class="number">1</span>)</span><br><span class="line">        channelsOut[i] = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int64</span>, <span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    end := time.Now()</span><br><span class="line">    fmt.Printf(<span class="string">"Create %v goroutines and channels cost %v ns, avg %v ns\n"</span>, coroutineNum, end.Sub(start).Nanoseconds(), end.Sub(start).Nanoseconds()/coroutineNum)</span><br><span class="line"></span><br><span class="line">    start = time.Now()</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">int64</span>(<span class="number">0</span>); i &lt; coroutineNum; i++ &#123;</span><br><span class="line">        <span class="keyword">go</span> runCallback(channelsIn[i], channelsOut[i])</span><br><span class="line">    &#125;</span><br><span class="line">    end = time.Now()</span><br><span class="line">    fmt.Printf(<span class="string">"Start %v goroutines and channels cost %v ns, avg %v ns\n"</span>, coroutineNum, end.Sub(start).Nanoseconds(), end.Sub(start).Nanoseconds()/coroutineNum)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> sum <span class="keyword">int64</span> = <span class="number">0</span></span><br><span class="line">    start = time.Now()</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">int64</span>(<span class="number">0</span>); i &lt; switchTimes; i++ &#123;</span><br><span class="line">        <span class="keyword">for</span> j := <span class="keyword">int64</span>(<span class="number">0</span>); j &lt; coroutineNum; j++ &#123;</span><br><span class="line">            channelsIn[j] &lt;- <span class="number">1</span></span><br><span class="line">            sum += &lt;-channelsOut[j]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    end = time.Now()</span><br><span class="line">    fmt.Printf(<span class="string">"Switch %v goroutines for %v times cost %v ns, avg %v ns\n"</span>, coroutineNum, sum, end.Sub(start).Nanoseconds(), end.Sub(start).Nanoseconds()/sum)</span><br><span class="line"></span><br><span class="line">    start = time.Now()</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">int64</span>(<span class="number">0</span>); i &lt; coroutineNum; i++ &#123;</span><br><span class="line">        <span class="built_in">close</span>(channelsIn[i])</span><br><span class="line">        <span class="built_in">close</span>(channelsOut[i])</span><br><span class="line">    &#125;</span><br><span class="line">    end = time.Now()</span><br><span class="line">    fmt.Printf(<span class="string">"Close %v goroutines cost %v ns, avg %v ns\n"</span>, coroutineNum, end.Sub(start).Nanoseconds(), end.Sub(start).Nanoseconds()/coroutineNum)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// runTest(1, 1000, 1000)</span></span><br><span class="line">    <span class="comment">// runTest(2, 5000, 200)</span></span><br><span class="line">    <span class="comment">// runTest(3, 10000, 100)</span></span><br><span class="line">    <span class="comment">// runTest(4, 50000, 50)</span></span><br><span class="line">    <span class="comment">// runTest(5, 100000, 10)</span></span><br><span class="line">    runTest(<span class="number">6</span>, <span class="number">500000</span>, <span class="number">5</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a href="http://morsmachine.dk/go-scheduler" target="_blank" rel="noopener">Go scheduler</a></li>
+<li><a href="http://sufuq.com/books/golang/Go%20in%20Action.pdf" target="_blank" rel="noopener">Go in action</a></li>
+<li><a href="https://draveness.me/golang/concurrency/golang-goroutine.html" target="_blank" rel="noopener">Draveness’ blog</a></li>
+<li><a href="https://gist.github.com/owt5008137" target="_blank" rel="noopener">OWenT’s gist</a></li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/09/19/LeetCode/LeetCode 0395 - Longest Substring with At Least K Repeating Characters/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0395 - Longest Substring with At Least K Repeating Characters</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/09/07/C++/C++ 08 - copy elision/">
+        <span class="next-text nav-default">C++ 08 - copy elision</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

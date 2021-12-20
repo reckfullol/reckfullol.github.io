@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="CUDA 03 - 延迟隐藏">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/05/08/CUDA/CUDA 03 - 延迟隐藏/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> CUDA 03 - 延迟隐藏 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          CUDA 03 - 延迟隐藏
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-05-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CUDA/">CUDA</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CUDA-03-延迟隐藏"><span class="toc-text">CUDA 03 - 延迟隐藏</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="CUDA-03-延迟隐藏"><a href="#CUDA-03-延迟隐藏" class="headerlink" title="CUDA 03 - 延迟隐藏"></a>CUDA 03 - 延迟隐藏</h1><a id="more"></a>
+
+<p>SM依赖线程级并行, 以最大化功能单元的利用率, 因此利用率与常驻线程束的数量直接相关. 在指令发出和完成之间对时钟周期被定义为指令延迟. 每当一个时钟周期中所有的线程调度器都有一个符合条件的线程束时, 可以达到计算资源的完全利用. 这就可以保证, 通过在其他常驻线程束中发布其他指令, 可以隐藏每个指令的延迟.</p>
+<p>与在CPU上相比, 延迟隐藏在CUDA编程中尤为重要. CPU核心是为同时最小化延迟一个或两个线程而设计的, 而GPU则是为了处理大量并发和轻量级线程以最大化吞吐量而设计的. GPU的指令延迟被其他线程束的计算隐藏.</p>
+<p>指令可以被分为两种基本类型:</p>
+<ul>
+<li>算数指令</li>
+<li>内存指令</li>
+</ul>
+<p>算数指令延迟是一个算数操作从开始到他产生输出之间的之间. 内存指令延迟是指发送出的加载或存储操作和数据到达目的地之间的时间. 对于每种情况, 相应的延迟大约为:</p>
+<ul>
+<li>算数操作: 10-20个时钟周期</li>
+<li>全局内存访问: 400-800个时钟周期</li>
+</ul>
+<p>下图表示线程束0阻塞执行流水线的一个事例. 线程束调度器选取其他线程束执行, 当线程束0符合条件再执行他.</p>
+<p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1557288938/cuda/warp_scheduler.png" alt="warp_scheduler"></p>
+<p>根据利特尔法则(Little‘s Law)可以估算出隐藏延迟所需要的活跃线程束的数量, 他起源于队列理论中的一个定理, 也可以应用于GPU中:</p>
+<blockquote>
+<p>所需线程束数量 = 延迟 x 吞吐量</p>
+</blockquote>
+<p>假设在内核里面一条指令的平均延迟是5个周期. 为了保持在每个周期内执行6个线程束的吞吐量, 则至少需要30个未完成的线程束.</p>
+<p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1557303594/cuda/littles_law.png" alt="littles_law"></p>
+<p>这里要注意吞吐量和带宽这两个概念经常被混淆, 根据实际情况他们可以被交换使用. 吞吐量和带宽都是用来度量性能的速度指标. 带宽通常是指理论峰值, 而吞吐量是指已达到的值. 带宽通常是用来描述单位时间内最大可能的数据传输量, 而吞吐量是用来描述单位时间内任何形式的信息或操作的执行速度, 例如, 每个周期完成多少个指令.</p>
+<p>对于算数运算来说, 其所需的并行可以表示成隐藏算数延迟所需要的操作数量. 我们以一个32位的浮点数乘加运算(a + b x c)为例, 表示在每个SM中每个时钟周期内的操作数量:</p>
+<table>
+<thead>
+<tr>
+<th>GPU模型</th>
+<th>指令延迟(周期)</th>
+<th>吞吐量(操作/周期)</th>
+<th>并行(操作)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fermi</td>
+<td>20</td>
+<td>32</td>
+<td>640</td>
+</tr>
+<tr>
+<td>Kepler</td>
+<td>20</td>
+<td>192</td>
+<td>3840</td>
+</tr>
+</tbody></table>
+<p>吞吐量由每个周期内的操作数量确定, 而执行一条指令的一个线程束对应32个操作. 因此, 为保持计算资源的充分利用, 对于Fermi GPU而言, 每个SM中所需的线程束数量为640 / 32 = 20个线程束. 因此, 算术运算所需的并行可以用操作的数量或线程数的数量来表示. 着个简单的单位转化表明, 由两种方法可以提高并行:</p>
+<ul>
+<li>指令级并行(ILP): 一个线程中由很多独立的指令</li>
+<li>线程级并行(TLP): 很多并发地符合条件的线程.</li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/05/10/LeetCode/LeetCode 0307 -  Range Sum Query - Mutable/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0307 -  Range Sum Query - Mutable</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/04/26/Operating System/Operating System 05 - 进程通信/">
+        <span class="next-text nav-default">Operating System 05 - 进程通信</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

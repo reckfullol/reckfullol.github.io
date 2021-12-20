@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="CUDA 01 - 硬件架构">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/02/28/CUDA/CUDA 01 - 硬件架构/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> CUDA 01 - 硬件架构 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          CUDA 01 - 硬件架构
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-28
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CUDA/">CUDA</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#硬件架构"><span class="toc-text">硬件架构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SP"><span class="toc-text">SP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SM"><span class="toc-text">SM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SIMT"><span class="toc-text">SIMT</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Warp"><span class="toc-text">Warp</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="硬件架构"><a href="#硬件架构" class="headerlink" title="硬件架构"></a>硬件架构</h1><a id="more"></a>
+
+<h2 id="SP"><a href="#SP" class="headerlink" title="SP"></a>SP</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1551324276/cuda/SM.jpg" alt="SM"></p>
+<p>SP(Streaming Processor): 也称为CUDA Core, 是任务执行的基本单元, GPU的并行计算就是多个SM同时进行计算.</p>
+<h2 id="SM"><a href="#SM" class="headerlink" title="SM"></a>SM</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1551325275/cuda/gpu-hardware-structure.png" alt="gpu-hardware-structure"></p>
+<p>SM(Streaming Multiprocessor): 由多个SP加上warp scheduler, register, shared memory等资源构成. 和CPU类似, register/shared memory是SM的稀缺资源, 供给驻留线程的使用, 因此也限制了GPU的并行能力.</p>
+<h2 id="SIMT"><a href="#SIMT" class="headerlink" title="SIMT"></a>SIMT</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1551326085/cuda/SIMT.png" alt="SIMT"></p>
+<p>SIMT: 具有Tesla架构的GPU具有一组SIMT(Single Instruction, Multiple Thread)多处理器. 他以可伸缩的SMs(Streaming Processors)阵列为中心实现了MIMD(Multiple instruction, Multiple Thread)的异步并行机制, 其中每个多处理器都包含了多个SP(Scale Processor), 为了管理运行各种不同程序的数百个线程, SIMT架构的多处理器会将各个线程映射到一个SP核心, 各个线程使用自己的指令地址和寄存器状态独立执行.</p>
+<p>每个MP(Mpltiple Processor)都拥有下列四种存储空间:</p>
+<ol>
+<li>Register: 本地32位的寄存器.</li>
+<li>Shared Memory: 并行数据缓存或共享存储器, 由所有SP核心共享.</li>
+<li>Constant Memory: 加速从固定存储空间进行的读取操作(只读), 由所有SP核心共享.</li>
+<li>Texture Memroy: 加速从纹理存储空间进行的读取操作(只读), 每个MP都会通过实现不同寻址模型和数据过滤的纹理单元来访问纹理缓存, 由所有SP核心共享.</li>
+</ol>
+<h2 id="Warp"><a href="#Warp" class="headerlink" title="Warp"></a>Warp</h2><p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1551327738/cuda/warp-status.png" alt="warp-status"></p>
+<p>SIMT以32个并行线程作为创建, 管理, 调度和执行的基本单位, 这样的线程组被称为warp. 当主机CPU上的CUDA程序调用到内核网格的时候, 网格的块将被枚举分发到具有可用执行容量的MP, SIMT会选择一个已经准备好的warp块, 并将下一条指令发送到这个warp块的活动进程. 一个warp的各个线程会在一个MP上并发执行.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/02/28/CUDA/CUDA 02 - 逻辑模型/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">CUDA 02 - 逻辑模型</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/02/26/HDU/HDU 1512 - Monkey King/">
+        <span class="next-text nav-default">HDU 1512 - Monkey King</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

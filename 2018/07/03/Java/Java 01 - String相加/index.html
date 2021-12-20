@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Java 01 - String相加">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/07/03/Java/Java 01 - String相加/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Java 01 - String相加 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Java 01 - String相加
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Java/">Java</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#String相加"><span class="toc-text">String相加</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java内存使用"><span class="toc-text">Java内存使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题解析"><span class="toc-text">问题解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="String相加"><a href="#String相加" class="headerlink" title="String相加"></a>String相加</h1><a id="more"></a>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringDemo</span></span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String MESSAGE=<span class="string">"taobao"</span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span> </span>&#123;</span><br><span class="line">    String a = <span class="string">"tao"</span>+<span class="string">"bao"</span>;</span><br><span class="line">    String b = <span class="string">"tao"</span>;</span><br><span class="line">    String c = <span class="string">"bao"</span>;</span><br><span class="line">    System.out.println(a == MESSAGE);</span><br><span class="line">    System.out.println((b + c) == MESSAGE);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Java内存使用"><a href="#Java内存使用" class="headerlink" title="Java内存使用"></a>Java内存使用</h2><p>首先我们要知道, 在Java中的变量和基本类型的值是放在栈内存, 而new出来的对象存放在内存中, 指向对象的引用还是存放在栈内存的.</p>
+<p>栈内存的一个特点是数据共享, 也就是说如果定义了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> j = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>那么i和j都会指向1这个常量地址, 如果i++, 那么常量值不会改变, i会去寻找栈中的新常量地址, 如果有就指向他, 如果没有就在栈中添加一个并指向他. 注意的是==操作是比较的内存地址是否相同, 那么当我们比较i == j的时候, 其实是比较所指向的常量地址. 所以</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="string">"abc"</span>;</span><br><span class="line">String b = <span class="string">"abc"</span>;</span><br><span class="line">System.out.println(a == b);</span><br></pre></td></tr></table></figure>
+
+<p>的输出也应该是true, 因为他们所指向的是栈中的同一常量”abc”.</p>
+<p>然而在堆内存中是没有数据共享的特点的. 所以</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="keyword">new</span> String(<span class="string">"abc"</span>);</span><br><span class="line">String b = <span class="keyword">new</span> String(<span class="string">"abc"</span>);</span><br><span class="line">System.out.println(a == b);</span><br></pre></td></tr></table></figure>
+
+<p>的输出应该是false, 因为他们在堆内存中是各自申请了一块空间. 如果我们是想比较他们的值是否相同, 可以调用equals()方法.</p>
+<h2 id="问题解析"><a href="#问题解析" class="headerlink" title="问题解析"></a>问题解析</h2><p>那么回到最开始的问题, 这段代码输出的结果是什么. 事实上, 这段代码的输出分别是true和false.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="string">"abc"</span> + <span class="string">"def"</span>;</span><br><span class="line">String a = <span class="string">"abcdef"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这两行代码编译后的字节码是一样的, 因为在编译期间, 编译器会会对字符串常量相加进行合并. 那么根据栈内存的数据共享, a和MESSAGE是指向栈中同一块常量空间.</p>
+<p>第二段的(b+c)编译器没有办法对其在编译期进行优化, 因为只有到了运行期才知道b和c的值. 在Java中对String的相加是通过StringBuffer实现的, 先构造一个StringBuffer对象来存放”tao”, 然后调用append()方法追加”bao”, 然后将值为”taobao”的StringBuffer转化成String. 值得注意的是, 这个过程StringBuffer和String都是存放在堆内存中的. 因此(b+c)得到的对象和MESSAGE所指向的内存地址也不一样, 输出的结果就为false.</p>
+<p>如果我们想让(b+c) == MESSAGE的输出结果为true, 那么有两种方法可以实现:</p>
+<ol>
+<li><p>调用intern()方法</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println((b + c).intern() == MESSAGE);</span><br></pre></td></tr></table></figure>
+
+<p> intern()方法会先检查栈内存中的String内存池中是否存在值相同的字符串常量, 如果存在, 那么返回该内存地址的引用. 因此当调用(b+c).intern()的时候就会返回和MESSGAE相同地址的引用, 输出结果也因此是true.</p>
+</li>
+<li><p>用final修饰变量</p>
+<p> final方法修饰变量, 类似于c中的const, 可以认为变量变成了常量. 因此在编译期就会对(b+c)进行优化, 使得(b+c)返回的是”taobao”的地址, 输出的结果就为true.</p>
+</li>
+</ol>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>在JDK1.5以后, 如果经过逃逸分析发现代码中不存在线程安全问题, 那么就会将同步锁消除, 即使用StringBuilder这一非线程安全的容器完成String相加.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/07/04/LeetCode/LeetCode 0221 - Maximal Square/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">LeetCode 0221 - Maximal Square</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/02/LeetCode/LeetCode 0220 - Contains Duplicate III/">
+        <span class="next-text nav-default">LeetCode 0220 - Contains Duplicate III</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

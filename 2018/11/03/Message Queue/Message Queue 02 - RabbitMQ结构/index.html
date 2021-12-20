@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Message Queue 02 - RabbitMQ结构">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/11/03/Message Queue/Message Queue 02 - RabbitMQ结构/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Message Queue 02 - RabbitMQ结构 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Message Queue 02 - RabbitMQ结构
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Message-Queue/">Message Queue</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RabbitMQ结构"><span class="toc-text">RabbitMQ结构</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="RabbitMQ结构"><a href="#RabbitMQ结构" class="headerlink" title="RabbitMQ结构"></a>RabbitMQ结构</h1><a id="more"></a>
+
+<p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1541251536/mq/rabbit_architecture.png" alt="rabbit_architecture"></p>
+<ol>
+<li><p>Message</p>
+<p> message是不具名的, 由消息头和消息体组成. 消息体是不透明的, 而消息头由一系列可选属性构成, 包括routing-key, priority, delivery-mode等.</p>
+</li>
+<li><p>Publisher</p>
+<p> 消息的生产者, 也是一个向交换器发布信息的客户端应用程序.</p>
+</li>
+<li><p>Exchange</p>
+<p> 交换器, 用来接收生产者发送的消息并将这些消息路由给虚拟主机中的队列.</p>
+</li>
+<li><p>Binding</p>
+<p> 绑定, 用于关联消息队列和交换器. 绑定就是基于路由键将交换器和消息队列连接起来的路由规则, 所以可以将交换器理解成一个由Binding构成的路由表.</p>
+</li>
+<li><p>Queue</p>
+<p> 消息队列, 用来保存信息直到发给消费者. 他是消息的容器, 也是消息的终点. 一个消息可投入一个或多个消息队列. 消息一直在队列里, 等待消费者链接到这个队列将其取走.</p>
+</li>
+<li><p>Connection</p>
+<p> 网络连接, 比如一个TCP连接.</p>
+</li>
+<li><p>Channel</p>
+<p> 信道, 多路复用连接中的一条独立的双向数据流通道. 信道是建立在真实的TCP连接的虚拟连接, AMQP命令都是通过信道发出去的, 不管是发布信息, 订阅队列还是接受信息, 这些动作都是通过信道完成. 因为对于操作系统来说建立和销毁TCP都是非常昂贵的开销, 所以引入了信道的概念, 用来复用一条TCP连接.</p>
+</li>
+<li><p>Consumer</p>
+<p> 消息的消费者, 表示一个从消息队列中取得消息的应用程序.</p>
+</li>
+<li><p>Virtual Host</p>
+<p> 虚拟主机, 用来表示一批交换器, 消息队列和相关对象. 虚拟主机是共享相同的身份认证和加密环境的独立服务器域. 每个vhost本质上就是一个mini版的RabbitMQ服务器, 拥有自己的队列, 交换器, 绑定和权限机制. vhost是AMQP概念的基础, 必须在连接时指定, RabbitMQ默认的vhost是/.</p>
+</li>
+<li><p>Broker</p>
+<p>表示消息队列服务器实体.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/11/03/Message Queue/Message Queue 03 - AMQP中的消息路由/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Message Queue 03 - AMQP中的消息路由</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/10/24/Ethereum/Ethereum 03 - 合约账户/">
+        <span class="next-text nav-default">Ethereum 03 - 合约账户</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

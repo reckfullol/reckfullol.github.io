@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Operating System 11 - 零拷贝">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/12/06/Operating System/Operating System 11 - 零拷贝/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Operating System 11 - 零拷贝 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Operating System 11 - 零拷贝
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-06
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Operating-System/">Operating System</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#零拷贝"><span class="toc-text">零拷贝</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#legacy"><span class="toc-text">legacy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#零拷贝-1"><span class="toc-text">零拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sendfile"><span class="toc-text">sendfile()</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="零拷贝"><a href="#零拷贝" class="headerlink" title="零拷贝"></a>零拷贝</h1><a id="more"></a>
+
+<h2 id="legacy"><a href="#legacy" class="headerlink" title="legacy"></a>legacy</h2><p>当我们将服务端主机磁盘中的文件不做修改的从已连接的socket发送出的, 通常是这么做的:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(ret = <span class="built_in">read</span>(disk_fd, buf, BUF_SIZE) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">write</span>(sock_fd, buf, ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是说我们将磁盘中的信息读入到内存中, 再将内存中的信息发送到socket. 但是由于Linux的I/O操作是基于缓冲的. 也是就是说在以上的I/O中, 发生了多次的数据拷贝.</p>
+<p><img src="https://res.cloudinary.com/dpe4i978o/image/upload/v1544098782/linux/send_file_legacy.jpg" alt="send_file_legacy"></p>
+<p>当应用程序访问某块数据的时候, 会首先检测最近是否有过访问, 文件内容是否在内核中存在缓存. 如果是, 操作系统则直接根据read系统调用提供的buffer地址, 将buffer所指定的数据拷贝到用户态的空间中. 如果不是, 操作系统则首先将磁盘上的数据拷贝到内核态的空间中, 主要是基于DMA, 也就是说这一步是不占用CPU. 然后将数据从内核空间拷贝到用户空间.</p>
+<p>接下来, write系统调用再把数据拷贝到内核的网络发送缓冲区中, 直到内容通过网卡发送到网络中完成整个过程, 这以过程也是基于DMA.</p>
+<p>那么这个过程中总共发生了4次数据拷贝, 2次是外部设备和中心部件的拷贝, 2次是用户态和内核态的拷贝. 即使是使用DMA来处理与外部设备的通讯, CPU仍然需要进行两次拷贝, 这一过程也发生了用户态和内核态之间的上下文切换, 加重了CPU的负担.</p>
+<h2 id="零拷贝-1"><a href="#零拷贝-1" class="headerlink" title="零拷贝"></a>零拷贝</h2><p>零拷贝的主要任务就是避免CPU将数据从一块存储拷贝到另外一块存储, 从而让CPU解放出来处理其他任务.</p>
+<h2 id="sendfile"><a href="#sendfile" class="headerlink" title="sendfile()"></a>sendfile()</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">sendfile</span><span class="params">(<span class="keyword">int</span> out_fd, <span class="keyword">int</span> in_fd, <span class="keyword">off_t</span>* offset, <span class="keyword">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>系统调用sendfile()表示在in_fd和out_fd之间传输文件内容. out_fd必须指向一个套接字, in_fd指向的必须是可以mmap的. 这也表示了sendfile只能是从文件到套接字.</p>
+<p>事实上, 当数据从外存到内核空间后, 我们是将这块缓冲区的描述符和数据长度传给socket缓冲区. 这个过程中只有DMA来完成数据拷贝, CPU并不负责, 并且避免了用户态和内核态之间的切换.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/12/07/C++/C++ 03 - 前置声明/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">C++ 03 - 前置声明</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/12/04/Networks/Networks 16 - 字节序/">
+        <span class="next-text nav-default">Networks 16 - 字节序</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

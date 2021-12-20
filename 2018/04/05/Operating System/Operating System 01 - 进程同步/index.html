@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Operating System 01 - 进程同步">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2018/04/05/Operating System/Operating System 01 - 进程同步/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Operating System 01 - 进程同步 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Operating System 01 - 进程同步
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-05
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Operating-System/">Operating System</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#进程同步"><span class="toc-text">进程同步</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#临界区"><span class="toc-text">临界区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#同步与互斥"><span class="toc-text">同步与互斥</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信号量"><span class="toc-text">信号量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#经典同步问题"><span class="toc-text">经典同步问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消费者生产者问题"><span class="toc-text">消费者生产者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读者写者问题"><span class="toc-text">读者写者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#哲学家问题"><span class="toc-text">哲学家问题</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h1><a id="more"></a>
+
+<h2 id="临界区"><a href="#临界区" class="headerlink" title="临界区"></a>临界区</h2><p>对临界资源访问的区域被称为<strong>临界区</strong>.</p>
+<p>为了互斥访问临界资源, 每个进程在访问临界区之前, 需要进行检查.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry section.</span></span><br><span class="line"><span class="comment">// critical section.</span></span><br><span class="line"><span class="comment">// exit section.</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="同步与互斥"><a href="#同步与互斥" class="headerlink" title="同步与互斥"></a>同步与互斥</h2><ul>
+<li><strong>同步</strong>: 多个进程按一定顺序执行.</li>
+<li><strong>互斥</strong>: 多个进程在同一时刻只有一个进程能进入临界区.</li>
+</ul>
+<h2 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h2><p><strong>信号量(Semaphore)</strong> 是一个整形变量, 可以对其执行<strong>down()</strong> 和<strong>up()</strong> 操作, 也就是P和V操作.</p>
+<ul>
+<li><strong>down</strong>: 如果信号量大于0, 执行-1操作; 如果信号量等于0, 进程睡眠, 等待信号量大于0.</li>
+<li><strong>up</strong>: 对信号量执行+1操作, 唤醒睡眠的进程让其完成down操作.</li>
+</ul>
+<p>down和up操作需要被设计成原语, 不可分割, 通常的做法是在执行这些操作的时候屏蔽中断.</p>
+<p>如果信号量的取值只能是0或者1, 那么就称为了互斥量(Mutex), 0表示临界区已经加锁, 1表示临界区解锁.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> semaphore;</span><br><span class="line">semaphore mutex = <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">P1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    down(&amp;mutex);</span><br><span class="line">    <span class="comment">// 临界区</span></span><br><span class="line">    up(&amp;mutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">P2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    down(&amp;mutex);</span><br><span class="line">    <span class="comment">// 临界区</span></span><br><span class="line">    up(&amp;mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="经典同步问题"><a href="#经典同步问题" class="headerlink" title="经典同步问题"></a>经典同步问题</h2><h3 id="消费者生产者问题"><a href="#消费者生产者问题" class="headerlink" title="消费者生产者问题"></a>消费者生产者问题</h3><p>问题描述: 使用一个<strong>缓冲区</strong>来保存物品, 只有缓冲区没有满, 生产者才可以放入物品; 只有缓冲区不为空, 消费者才可以拿到物品.</p>
+<ol>
+<li><p>信号量</p>
+<p> 因为缓冲区属于临界资源, 因此需要使用一个<strong>互斥量mutex</strong>来控制对缓冲区的互斥访问.</p>
+<p> 为了同步生产者和消费者的行为, 需要记录缓冲区中物品的数量. 数量使用信号量来统计: <strong>empty</strong>记录空缓冲区的数量, <strong>full</strong>记录满缓冲区的数量. 因此empty信号量在生产者进程中使用, 当empty不为0时, 生产者才能放入物品; ful信号量在消费者进程中使用, 当full不为0时, 消费者才能拿走物品.</p>
+<p> 这里要注意一点, <strong>不能对缓冲区进行加锁后再测试信号量</strong>. 也就是说, 不能在down(mutex)前执行down(empty/full). 因为当发现信号量(empty/full)为0时, 该进程会被挂起, 但临界区尚未被释放, 其余进程不能进入并进行up()操作, 导致生产者和消费者会一直等下去, 造成死锁.</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">100</span>;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> semaphore;</span><br><span class="line"></span><br><span class="line">semaphore mutex = <span class="number">1</span>;</span><br><span class="line">semaphore empty = N;</span><br><span class="line">semaphore full = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Producer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> item = ProductItem();</span><br><span class="line">        Down(&amp;empty);</span><br><span class="line">        Down(&amp;mutex);</span><br><span class="line">        InsertItem(item);</span><br><span class="line">        Up(&amp;mutex);</span><br><span class="line">        Up(&amp;full);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Consumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        Down(&amp;full);</span><br><span class="line">        Down(&amp;mutex);</span><br><span class="line">        <span class="keyword">int</span> item = RemoveItem();</span><br><span class="line">        Up(&amp;mutex);</span><br><span class="line">        Up(&amp;empty);</span><br><span class="line">        ConsumeItem(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>管程</p>
+<p> 使用信号量机制实现的生产者消费者问题需要客户端代码做很多控制, 而管程把控制的代码独立出来, 不仅不容易出错, 也使得客户端代码调用更容易.</p>
+ <figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">monitor ProducerConsumer</span><br><span class="line">    integer i;</span><br><span class="line">    condition c;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">procedure</span> <span class="title">insert</span><span class="params">()</span>;</span></span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">procedure</span> <span class="title">remove</span><span class="params">()</span>;</span></span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span> monitor;</span><br></pre></td></tr></table></figure>
+
+<p> 管程有一个重要特性: <strong>在一个时刻只能有一个进程使用管程</strong>. 进程在无法继续执行的时候不能一直占用管程, 否则其他进程永远不能使用管程.</p>
+<p> 管程引入了条件变量以及相关的操作: <strong>wait()</strong> 和<strong>singal()</strong> 来实现同步操作. 对条件变量执行wait()操作会导致调用进程阻塞, 把管程让出来给另一个进程持有. singal()操作用于唤醒被阻塞的进程.</p>
+ <figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">monitor ProducerConsumer</span><br><span class="line">    condition full, empty;</span><br><span class="line">    integer <span class="keyword">const</span> := <span class="number">0</span>;</span><br><span class="line">    condition c;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">procedure</span> <span class="title">Insert</span><span class="params">(item: integer)</span>;</span></span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> count = N <span class="keyword">then</span> Wait(full);</span><br><span class="line">        InsertItem(item);</span><br><span class="line">        count := count + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> count = <span class="number">1</span> the Singal(empty);</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">Remove</span>:</span> integer</span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> count = <span class="number">0</span> <span class="keyword">then</span> Wait(empty);</span><br><span class="line">        remove = RemoveItem;</span><br><span class="line">        count := count - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> count = N - <span class="number">1</span> <span class="keyword">then</span> Singal(full);</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span> monitor</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">procedure</span> <span class="title">Producer</span></span></span><br><span class="line"><span class="function"><span class="title">begin</span></span></span><br><span class="line"><span class="function">    <span class="title">while</span> <span class="title">true</span> <span class="title">do</span></span></span><br><span class="line"><span class="function">    <span class="title">begin</span></span></span><br><span class="line"><span class="function">        <span class="title">item</span> = <span class="title">ProduceItem</span>;</span></span><br><span class="line">        ProducerConsumer.Insert(item);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">procedure</span> <span class="title">Consumer</span></span></span><br><span class="line"><span class="function"><span class="title">begin</span></span></span><br><span class="line"><span class="function">    <span class="title">while</span> <span class="title">true</span> <span class="title">do</span></span></span><br><span class="line"><span class="function">    <span class="title">begin</span></span></span><br><span class="line"><span class="function">        <span class="title">item</span> = <span class="title">ProducerConsumer</span>.<span class="title">Remove</span>;</span></span><br><span class="line">        ConsumeItem(item);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="读者写者问题"><a href="#读者写者问题" class="headerlink" title="读者写者问题"></a>读者写者问题</h3><p>问题描述: 允许多个进程同时对数据进行读操作，但是不允许<strong>读和写</strong>以及<strong>写和写</strong>操作同时发生。</p>
+<p>用一个整型变量<strong>count</strong>记录在对数据进行读操作的进程数量, 一个互斥量<strong>countMutex</strong>用于对count加锁, 一个互斥量<strong>dataMutex</strong>用于对读写的数据加锁.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> semaphore;</span><br><span class="line"></span><br><span class="line">semaphore countMutex = <span class="number">1</span>;</span><br><span class="line">semaphore dataMutex = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Reader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        Down(&amp;countMutex);</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">if</span>(count == <span class="number">1</span>) &#123;</span><br><span class="line">            Down(&amp;dataMutex);</span><br><span class="line">        &#125;</span><br><span class="line">        Up(&amp;countMutex);</span><br><span class="line">        Read();</span><br><span class="line">        Down(&amp;countMutex);</span><br><span class="line">        count--;</span><br><span class="line">        <span class="keyword">if</span>(count == <span class="number">0</span>) &#123;</span><br><span class="line">            Up(&amp;dataMutex);</span><br><span class="line">        &#125;</span><br><span class="line">        Up(&amp;countMutex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Writer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        Down(&amp;dataMutex);</span><br><span class="line">        Writer();</span><br><span class="line">        Up(&amp;dataMutex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="哲学家问题"><a href="#哲学家问题" class="headerlink" title="哲学家问题"></a>哲学家问题</h3><p>问题描述: 五个哲学家围着一张圆桌，每个哲学家面前放着食物。哲学家的生活有两种交替活动：吃饭以及思考。当一个哲学家吃饭时，需要先拿起自己左右两边的两根筷子，并且一次只能拿起一根筷子。</p>
+<p>为了防止死锁的发生, 可以设置两个条件:</p>
+<ol>
+<li>必须同时拿起左右两根筷子.</li>
+<li>只有在两个邻居都没有进餐的情况下才允许进餐.</li>
+</ol>
+<p>用互斥量<strong>mutex</strong>对餐桌加锁, 用信号量数组<strong>s[N]</strong> 修饰每个哲学家的状态.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">5</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LEFT (i + N - 1)  % N</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RIGHT (i + 1) % N</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> THINKING 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HUNGRY 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EATTING 2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> semaphore;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> state[N];</span><br><span class="line"></span><br><span class="line">semaphore mutex = <span class="number">1</span>;</span><br><span class="line">semaphore s[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Philosophere</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        Think();</span><br><span class="line">        TakeTwo(i);</span><br><span class="line">        Eat();</span><br><span class="line">        PutTwo(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TakeTwo</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    Down(&amp;mutex);</span><br><span class="line">    state[i] = HUNGRY;</span><br><span class="line">    Test(i);</span><br><span class="line">    Up(&amp;mutex);</span><br><span class="line">    Down(&amp;s[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PutTwo</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    Down(&amp;mutex);</span><br><span class="line">    state[i] = THINKING;</span><br><span class="line">    test(LEFT);</span><br><span class="line">    test(RIGHT);</span><br><span class="line">    Up(&amp;mutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Test</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(state[i] == HUNGRY &amp;&amp; state[LEFT] != EATTING &amp;&amp; state[RIGHT] != EATTING) &#123;</span><br><span class="line">        state[i] = EATTING;</span><br><span class="line">        Up(&amp;s[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/04/09/Operating System/Operating System 02 - IO复用/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Operating System 02 - IO复用</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/04/04/Bo/Bo 05 - 曾博归来：知乎“勃学”亚文化的模因与迷思 -  RMyzc/">
+        <span class="next-text nav-default">Bo 05 - 曾博归来：知乎“勃学”亚文化的模因与迷思 -  RMyzc</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

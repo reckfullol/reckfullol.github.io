@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Operating System 05 - 进程通信">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Reckful's blog">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/logo.jpg?v=2.6.0">
+
+
+
+<link rel="canonical" href="//reckful.studio/2019/04/26/Operating System/Operating System 05 - 进程通信/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css">
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Operating System 05 - 进程通信 - Reckful's blog </title>
+  <link rel="alternate" href="atom.xml" title="Reckful's blog" type="application/atom+xml">
+</head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Reckful's blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            Home
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            Archives
+          
+        </li>
+      </a>
+    
+      <a href="/categories">
+        <li class="mobile-menu-item">
+          
+          
+            Categories
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            About
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">Reckful's blog</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/categories">
+            
+            
+              Categories
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Operating System 05 - 进程通信
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-26
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/Operating-System/">Operating System</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#进程通信"><span class="toc-text">进程通信</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#进程通信范式"><span class="toc-text">进程通信范式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通信方式"><span class="toc-text">通信方式</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h1 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h1><a id="more"></a>
+
+<h2 id="进程通信范式"><a href="#进程通信范式" class="headerlink" title="进程通信范式"></a>进程通信范式</h2><ol>
+<li><p>持锁共享内存</p>
+<p> 在这种范式下, 两个或者多个进程可以同时读写一块或者多块常规内存区域. 有时进程需要在这些内存区域上执行一些具有原子性的操作序列, 其他进程在操作完成前不得访问这些区域, 这就需要一种令该进程阻止其他进程访问这些区域的方法, 也就是锁.</p>
+<p> 锁的实现需要内存系统的支持, 一般是由硬件以特殊指令的形式提供支持. 使用锁的进程之间必须通力合作: 所有进程必须先获取锁才能访问共享内存区域, 访问结束后还需要将锁归还给其他进程使用. 操作系统或编程语言分别以系统调用或语言构件的形式提供了信号量, 监视器和互斥量等以基础锁为基础的高级构件, 用以确保锁的请求和释放的正确性. 尽管借助这些构件我们可以规避最棘手的问题, 但仍然难以克服诸多锁的缺点:</p>
+<ol>
+<li><p>锁的开销过大.</p>
+</li>
+<li><p>锁是内存系统中的竞争热点.</p>
+</li>
+<li><p>出错的进程可能正处于加锁状态, 无法释放锁.</p>
+</li>
+<li><p>难以调试锁的问题.</p>
+</li>
+<li><p>随着程序规模和进程数量的增长, 潜在的死锁问题很难避免.</p>
+<p>这种通信范式最好只出现在底层编程场合, 例如操作系统内核中. 但是在目前流行的大部分编程语言中都能看到锁的身影, 因为其本身实现并不复杂, 也不会对编程模型产生影响.</p>
+</li>
+</ol>
+</li>
+<li><p>软件事务性内存(STM, Software Transactional Memory)</p>
+<p> 我们在Haskell的GHC的实现和基于JVM的Clojure语言中看到这种机制. STM将内存当作传统数据库, 用事务决定何时写入什么内容. 这种实现是用乐观方式来规避锁: 将一组读写访问视作单个操作, 如果两个进程试图同时访问共享区域, 则各自启动一个事务, 最终只会有一个事务成功. 另一个进程会得知事务的失败, 并应该在检查共享区域的新内容后重试. 该模型较为直观, 不需要通过锁的占用释放来访问共享区域.</p>
+<p> STM的缺点在于:</p>
+<ol>
+<li><p>需要对失败事务进行处理.</p>
+</li>
+<li><p>事物本身有显著开销, 对于数量较多的并发访问性能差.</p>
+</li>
+<li><p>在确定进程成功前, 需要额外的内存来存放试图写入的数据.</p>
+<p>从编程人员角度而言, STM对可控性高于使用锁, 其本质上是持有锁的共享内存的变体, 他在操作系统层面的操作要甚于编程层面. 理想情况下, 系统应该像支持虚拟内存一样对STM提供硬件支持.</p>
+</li>
+</ol>
+</li>
+<li><p>Future, Promise及同类机制</p>
+<p> 所谓future或promise, 这个概念还有其他形式: 在E和MultiLisp等语言都可以看到他对身影. 类似对还有Id和Glasgow Haskell中的I-var和M-var, Concurrent Prolog中的<br>并发逻辑变量, 以及Oz中的数据流变量.</p>
+<p> 其基本思路是: 每个future代表一个被外包到其他进程的计算结果, 该进程可能跑到别的CPU甚至是别的主机上. Future可以像其他对象一样被传递, 但是无法在计算完成之前读取结果, 必须等待计算完成. 这种方法虽然概念简单, 简化了并发系统中的数据传递, 但也使程序在远端进程故障和网络故障面前v变得脆弱, 计算结果尚未就绪而连接又不幸断开, 试图访问promise的值的代码便会无所适从.</p>
+</li>
+<li><p>消息传递</p>
+<p> 消息传递意味这接收进程实际上获取了一份独立的数据副本, 发送方感知不到接收方对副本所做的任何操作. 向发送方回传信息的唯一途径就是反向发送另一条消息. 因此我们可知, 无论收发双方是在一台及其还是受网络隔离, 都能以相同的方式通信.</p>
+</li>
+</ol>
+<h2 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h2><ol>
+<li><p>管道</p>
+<p>管道是通过pipe函数创建, fd[0]用于读, fd[1]用于写.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pipe</span><span class="params">(<span class="keyword">int</span> fd[<span class="number">2</span>])</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>具有以下限制:</p>
+<ol>
+<li>只支持半双工通信(单向交替传输)</li>
+<li>只能在父子进程中使用</li>
+</ol>
+</li>
+<li><p>FIFO</p>
+<p> 也被称为命名管道, 可以不止在父子进程中使用.</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifioat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span>* path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> FIFO常用于C/S模型, FIFO作为汇聚点, 在C/S进程时间传递消息.</p>
+</li>
+<li><p>消息队列</p>
+<p> 相比较FIFO, 消息队列有以下优点:</p>
+<ol>
+<li>消息队列可以独立于读写进程存在, 从而避免了FIFO中同步管道的打开和关闭时可能产生的困难.</li>
+<li>避免了FIFO的同步阻塞, 不需要进程提供同步方法.</li>
+<li>读进程可以根据消息类型有选择的接收消息, 而不像FIFO那样只能默认的接收.</li>
+</ol>
+</li>
+<li><p>信号量</p>
+<p> 他是一个计数器, 用于为多个进程提供共享数据对象的访问.</p>
+</li>
+<li><p>共享存储</p>
+<p> 允许多个进程共享一个给定的存储区, 因为数据不需要在进程之间复制, 所以这是一种最快的IPC.</p>
+<p> 需要使用信号量来互斥的对共享存储进行访问.</p>
+<p> 多个进程可以将同一个文件映射到他们的地址空间从而实现共享内存. 另外XSI共享内存不是使用文件, 而是使用内存的匿名段.</p>
+</li>
+<li><p>套接字</p>
+<p> 和其他通信机制不同的是, 他可用于不同机器间的进程通信.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/05/08/CUDA/CUDA 03 - 延迟隐藏/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">CUDA 03 - 延迟隐藏</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/04/04/Unity/Unity 01 - ECS概念/">
+        <span class="next-text nav-default">Unity 01 - ECS概念</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:snakeflutes@gmail.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a href="https://github.com/Snakeflute" class="iconfont icon-github" title="github"></a>
+        
+      
+    
+      
+    
+      
+        
+          <a href="https://www.zhihu.com/people/snakeflute" class="iconfont icon-zhihu" title="zhihu"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2017 - 
+    
+    2021
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Reckful</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+
+
+
+    
+  
+
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>
